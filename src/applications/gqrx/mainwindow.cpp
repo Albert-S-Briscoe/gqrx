@@ -1139,6 +1139,14 @@ void MainWindow::selectDemod(int mode_idx)
             setRdsDecoder(true);
         break;
 
+    case DockRxOpt::MODE_NRSC5:
+        /* NRSC-5 */
+        rx->set_demod(receiver::RX_DEMOD_NRSC5);
+        ui->plotter->setDemodRanges(-200e3, -200e3, 200e3, 200e3, true);
+        uiDockAudio->setFftRange(0,22050);
+        click_res = 100;
+        break;
+
     case DockRxOpt::MODE_LSB:
         /* LSB */
         rx->set_demod(receiver::RX_DEMOD_SSB);

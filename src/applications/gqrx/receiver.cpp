@@ -37,6 +37,7 @@
 #include "dsp/rx_fft.h"
 #include "receivers/nbrx.h"
 #include "receivers/wfmrx.h"
+#include "receivers/digital.h"
 
 #ifdef WITH_PULSEAUDIO
 #include "pulseaudio/pa_sink.h"
@@ -913,6 +914,11 @@ receiver::status receiver::set_demod(rx_demod demod, bool force)
         rx->set_demod(nbrx::NBRX_DEMOD_SSB);
         break;
 
+    case RX_DEMOD_NRSC5:
+        connect_all(RX_CHAIN_DIGITAL);
+        rx->set_demod(digital::DIGITAL_DEMOD_NRSC5);
+        break;
+
     default:
         ret = STATUS_ERROR;
         break;
@@ -1361,6 +1367,14 @@ void receiver::connect_all(rx_chain type)
         {
             rx.reset();
             rx = make_wfmrx(d_quad_rate, d_audio_rate);
+        }
+        break;
+
+    case RX_CHAIN_DIGITAL:
+        if (rx->name() != "DIGITAL")
+        {
+            rx.reset();
+            rx = make_digital(d_quad_rate, d_audio_rate);
         }
         break;
 

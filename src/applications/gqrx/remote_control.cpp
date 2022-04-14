@@ -477,6 +477,10 @@ int RemoteControl::modeStrToInt(QString mode_str)
     {
         mode_int = DockRxOpt::MODE_WFM_STEREO_OIRT;
     }
+    else if (mode_str.compare("NRSC5", Qt::CaseInsensitive) == 0)
+    {
+        mode_int = DockRxOpt::MODE_NRSC5;
+    }
     return mode_int;
 }
 
@@ -536,6 +540,10 @@ QString RemoteControl::intToModeStr(int mode)
 
     case DockRxOpt::MODE_WFM_STEREO_OIRT:
         mode_str = "WFM_ST_OIRT";
+        break;
+
+    case DockRxOpt::MODE_NRSC5:
+        mode_str = "NRSC5";
         break;
 
     default:

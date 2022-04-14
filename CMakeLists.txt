@@ -134,6 +134,8 @@ if(NOT Gnuradio_FOUND)
     message(FATAL_ERROR "GnuRadio Runtime required to compile gqrx")
 endif()
 
+find_package(GrNrsc5Rx REQUIRED)
+
 find_package(Volk)
 
 # Pass the GNU Radio version as 0xMMNNPP BCD.
@@ -249,6 +251,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include_directories(
     ${CMAKE_SOURCE_DIR}/include
     ${GNURADIO_OSMOSDR_INCLUDE_DIRS}
+    ${GRNRSC5RX_INCLUDE_DIRS}
 )
 
 link_directories(

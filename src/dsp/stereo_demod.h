@@ -61,7 +61,7 @@ typedef std::shared_ptr<stereo_demod> stereo_demod_sptr;
 #endif
 
 
-/*! \brief Return a shared_ptr to a new instance of stere_demod.
+/*! \brief Return a shared_ptr to a new instance of stereo_demod.
  *  \param quad_rate The input sample rate.
  *  \param audio_rate The audio rate.
  *  \param stereo On/off stereo mode.
