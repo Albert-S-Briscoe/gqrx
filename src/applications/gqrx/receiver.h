@@ -201,6 +201,9 @@ public:
     status      set_amsync_dcr(bool enabled);
     status      set_amsync_pll_bw(float pll_bw);
 
+    /* nrsc5 parameters */
+    status      set_nrsc5_program(int program);
+
     /* Audio parameters */
     status      set_af_gain(float gain_db);
     status      start_audio_recording(const std::string filename);

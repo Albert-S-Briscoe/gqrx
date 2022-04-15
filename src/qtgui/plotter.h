@@ -116,6 +116,12 @@ public:
         m_FftCenter = qBound(-limit, f, limit);
     }
 
+    /* Sets the NRSC-5 sidebands, but could set other stuff. */
+    void setMode(bool doubleSideband)
+    {
+        m_DoubleSidebandFilter = doubleSideband;
+    };
+
     int     getNearestPeak(QPoint pt);
     void    setWaterfallSpan(quint64 span_ms);
     quint64 getWfTimeRes() const;
@@ -232,6 +238,7 @@ private:
     bool        m_BookmarksEnabled;   /*!< Show/hide bookmarks on spectrum */
     bool        m_InvertScrolling;
     bool        m_DXCSpotsEnabled;    /*!< Show/hide DXC Spots on spectrum */
+    bool        m_DoubleSidebandFilter; /*!< Show/hide NRSC-5 sidebands */
     int         m_DemodHiCutFreq;
     int         m_DemodLowCutFreq;
     int         m_DemodFreqX{};       //screen coordinate x position

@@ -150,3 +150,8 @@ void digital::set_demod(int rx_demod)
     /* continue processing */
     unlock();
 }
+
+void digital::set_nrsc5_program(int program)
+{
+    std::cerr << "not implemented yet\n";
+}

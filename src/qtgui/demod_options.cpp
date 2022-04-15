@@ -231,3 +231,19 @@ void CDemodOptions::on_pllBwSelector_activated(int index)
 {
     emit amSyncPllBwSelected(pll_bw_from_index(index));
 }
+
+
+void CDemodOptions::setProgram(int program)
+{
+    ui->programSelector->setCurrentIndex(program);
+}
+
+int CDemodOptions::getProgram(void) const
+{
+    return ui->programSelector->currentIndex();
+}
+
+void CDemodOptions::on_programSelector_activated(int index)
+{
+    emit nrsc5ProgramSelected(index);
+}

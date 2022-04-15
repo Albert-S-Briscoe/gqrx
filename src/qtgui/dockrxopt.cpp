@@ -117,6 +117,7 @@ DockRxOpt::DockRxOpt(qint64 filterOffsetRange, QWidget *parent) :
     connect(demodOpt, SIGNAL(cwOffsetChanged(int)), this, SLOT(demodOpt_cwOffsetChanged(int)));
     connect(demodOpt, SIGNAL(amSyncDcrToggled(bool)), this, SLOT(demodOpt_amSyncDcrToggled(bool)));
     connect(demodOpt, SIGNAL(amSyncPllBwSelected(float)), this, SLOT(demodOpt_amSyncPllBwSelected(float)));
+    connect(demodOpt, SIGNAL(nrsc5ProgramSelected(int)), this, SLOT(demodOpt_nrsc5ProgramSelected(int)));
 
     // AGC options dialog
     agcOpt = new CAgcOptions(this);
@@ -639,6 +640,8 @@ void DockRxOpt::updateDemodOptPage(int demod)
         demodOpt->setCurrentPage(CDemodOptions::PAGE_CW_OPT);
     else if (demod == MODE_AM_SYNC)
         demodOpt->setCurrentPage(CDemodOptions::PAGE_AMSYNC_OPT);
+    else if (demod == MODE_NRSC5)
+        demodOpt->setCurrentPage(CDemodOptions::PAGE_NRSC5_OPT);
     else
         demodOpt->setCurrentPage(CDemodOptions::PAGE_NO_OPT);
 }
@@ -802,6 +805,15 @@ void DockRxOpt::demodOpt_amSyncDcrToggled(bool enabled)
 void DockRxOpt::demodOpt_amSyncPllBwSelected(float pll_bw)
 {
     emit amSyncPllBwSelected(pll_bw);
+}
+
+/**
+ * @brief NRSC-5 Program changed by user.
+ * @param program The new program.
+ */
+void DockRxOpt::demodOpt_nrsc5ProgramSelected(int program)
+{
+    emit nrsc5ProgramSelected(program);
 }
 
 /** Noise blanker 1 button has been toggled. */

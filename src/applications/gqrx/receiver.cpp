@@ -976,6 +976,14 @@ receiver::status receiver::set_amsync_pll_bw(float pll_bw)
     return STATUS_OK;
 }
 
+receiver::status receiver::set_nrsc5_program(int program)
+{
+    if (rx->has_nrsc5())
+        rx->set_nrsc5_program(program);
+
+    return STATUS_OK;
+}
+
 receiver::status receiver::set_af_gain(float gain_db)
 {
     float k;

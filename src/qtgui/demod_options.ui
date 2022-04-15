@@ -310,7 +310,7 @@ For digital modes it is best to switch it off.</string>
             </size>
            </property>
            <property name="toolTip">
-		   <string>Carrier tracking PLL. Weak, noisy or fading signals may
+            <string>Carrier tracking PLL. Weak, noisy or fading signals may
 benefit from a slower PLL. A slower PLL will take longer
 to react to changes in the carrier frequency however.</string>
            </property>
@@ -337,7 +337,7 @@ to react to changes in the carrier frequency however.</string>
            </item>
           </widget>
          </item>
-	 <item row="1" column="0">
+         <item row="1" column="0">
           <widget class="QCheckBox" name="syncdcrCheckBox">
            <property name="toolTip">
             <string>Enable/disable DC removal.</string>
@@ -348,6 +348,45 @@ to react to changes in the carrier frequency however.</string>
            <property name="checked">
             <bool>true</bool>
            </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="demodNrsc5Opt">
+      <layout class="QVBoxLayout" name="verticalLayout_7">
+       <item>
+        <layout class="QFormLayout" name="formLayout">
+         <item row="0" column="0">
+          <widget class="QLabel" name="programLabel">
+           <property name="text">
+            <string>Program</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="programSelector">
+           <item>
+            <property name="text">
+             <string>HD-1</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>HD-2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>HD-3</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>HD-4</string>
+            </property>
+           </item>
           </widget>
          </item>
         </layout>

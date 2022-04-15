@@ -170,6 +170,9 @@ signals:
     /** Signal emitted when new AM-Sync PLL BW is selected. */
     void amSyncPllBwSelected(float pll_bw);
 
+    /*! \brief Signal emitted when new PLL BW is selected. */
+    void nrsc5ProgramSelected(int program);
+
     /** Signal emitted when baseband gain has changed. Gain is in dB. */
     //void bbGainChanged(float gain);
 
@@ -232,6 +235,7 @@ private slots:
     void demodOpt_cwOffsetChanged(int offset);
     void demodOpt_amSyncDcrToggled(bool enabled);
     void demodOpt_amSyncPllBwSelected(float pll_bw);
+    void demodOpt_nrsc5ProgramSelected(int program);
 
     // Signals coming from AGC options popup
     void agcOpt_hangToggled(bool checked);

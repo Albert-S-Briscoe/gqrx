@@ -149,6 +149,16 @@ void receiver_base_cf::set_amsync_pll_bw(float pll_bw)
     (void) pll_bw;
 }
 
+bool receiver_base_cf::has_nrsc5()
+{
+    return false;
+}
+
+void receiver_base_cf::set_nrsc5_program(int program)
+{
+    (void) program;
+}
+
 void receiver_base_cf::get_rds_data(std::string &outbuff, int &num)
 {
         (void) outbuff;

@@ -47,7 +47,8 @@ public:
         PAGE_AM_OPT = 2,
         PAGE_CW_OPT = 3,
         PAGE_AMSYNC_OPT = 4,
-        PAGE_NUM    = 5
+        PAGE_NRSC5_OPT = 5,
+        PAGE_NUM    = 6
     };
 
     explicit CDemodOptions(QWidget *parent = 0);
@@ -70,6 +71,9 @@ public:
     void setPllBw(float pll_bw);
     float getPllBw(void) const;
 
+    void setProgram(int program);
+    int getProgram(void) const;
+
 signals:
     /*! \brief Signal emitted when new FM deviation is selected. */
     void fmMaxdevSelected(float max_dev);
@@ -89,6 +93,9 @@ signals:
     /*! \brief Signal emitted when new PLL BW is selected. */
     void amSyncPllBwSelected(float pll_bw);
 
+    /*! \brief Signal emitted when new PLL BW is selected. */
+    void nrsc5ProgramSelected(int program);
+
 private slots:
     void on_maxdevSelector_activated(int index);
     void on_emphSelector_activated(int index);
@@ -96,6 +103,7 @@ private slots:
     void on_cwOffsetSpin_valueChanged(int value);
     void on_syncdcrCheckBox_toggled(bool checked);
     void on_pllBwSelector_activated(int index);
+    void on_programSelector_activated(int index);
 
 private:
     Ui::CDemodOptions *ui;

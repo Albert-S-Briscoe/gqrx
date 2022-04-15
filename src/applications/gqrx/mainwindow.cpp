@@ -224,6 +224,7 @@ MainWindow::MainWindow(const QString& cfgfile, bool edit_conf, QWidget *parent) 
     connect(uiDockRxOpt, SIGNAL(cwOffsetChanged(int)), this, SLOT(setCwOffset(int)));
     connect(uiDockRxOpt, SIGNAL(amSyncDcrToggled(bool)), this, SLOT(setAmSyncDcr(bool)));
     connect(uiDockRxOpt, SIGNAL(amSyncPllBwSelected(float)), this, SLOT(setAmSyncPllBw(float)));
+    connect(uiDockRxOpt, SIGNAL(nrsc5ProgramSelected(int)), this, SLOT(setNrsc5Program(int)));
     connect(uiDockRxOpt, SIGNAL(agcToggled(bool)), this, SLOT(setAgcOn(bool)));
     connect(uiDockRxOpt, SIGNAL(agcHangToggled(bool)), this, SLOT(setAgcHang(bool)));
     connect(uiDockRxOpt, SIGNAL(agcThresholdChanged(int)), this, SLOT(setAgcThreshold(int)));
@@ -1055,6 +1056,7 @@ void MainWindow::selectDemod(int mode_idx)
     int     filter_preset = uiDockRxOpt->currentFilter();
     int     flo=0, fhi=0, click_res=100;
     bool    rds_enabled;
+    bool    doubleSideband = false;
 
     // validate mode_idx
     if (mode_idx < DockRxOpt::MODE_OFF || mode_idx >= DockRxOpt::MODE_LAST)
@@ -1144,6 +1146,7 @@ void MainWindow::selectDemod(int mode_idx)
         rx->set_demod(receiver::RX_DEMOD_NRSC5);
         ui->plotter->setDemodRanges(-200e3, -200e3, 200e3, 200e3, true);
         uiDockAudio->setFftRange(0,22050);
+        doubleSideband = true;
         click_res = 100;
         break;
 
@@ -1193,6 +1196,7 @@ void MainWindow::selectDemod(int mode_idx)
     ui->plotter->setHiLowCutFrequencies(flo, fhi);
     ui->plotter->setClickResolution(click_res);
     ui->plotter->setFilterClickResolution(click_res);
+    ui->plotter->setMode(doubleSideband);
     rx->set_filter((double)flo, (double)fhi, d_filter_shape);
     rx->set_cw_offset(cwofs);
     rx->set_sql_level(uiDockRxOpt->currentSquelchLevel());
@@ -1265,6 +1269,18 @@ void MainWindow::setAmSyncPllBw(float pll_bw)
 
     /* receiver will check range */
     rx->set_amsync_pll_bw(pll_bw);
+}
+
+/**
+ * @brief New NRSC-5 Program selected.
+ * @param program The new program number.
+ */
+void MainWindow::setNrsc5Program(int program)
+{
+    qDebug() << "NRSC-5 Program: " << program;
+
+    /* receiver will check range */
+    rx->set_nrsc5_program(program);
 }
 
 /**

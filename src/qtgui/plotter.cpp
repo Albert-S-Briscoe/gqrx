@@ -1483,12 +1483,29 @@ void CPlotter::drawOverlay()
         m_DemodFreqX = xFromFreq(m_DemodCenterFreq);
         m_DemodLowCutFreqX = xFromFreq(m_DemodCenterFreq + m_DemodLowCutFreq);
         m_DemodHiCutFreqX = xFromFreq(m_DemodCenterFreq + m_DemodHiCutFreq);
-
-        int dw = m_DemodHiCutFreqX - m_DemodLowCutFreqX;
-
         painter.setOpacity(0.3);
-        painter.fillRect(m_DemodLowCutFreqX, 0, dw, h,
-                         QColor(PLOTTER_FILTER_BOX_COLOR));
+
+        // Currently specific to NRSC-5
+        if (m_DoubleSidebandFilter)
+        {
+            int upperX = xFromFreq(m_DemodCenterFreq + 115000);
+
+            int lowerWidth = xFromFreq(m_DemodCenterFreq - 115000) - m_DemodLowCutFreqX;
+            int upperWidth = m_DemodHiCutFreqX - upperX;
+
+            painter.fillRect(m_DemodLowCutFreqX, 0, lowerWidth, h,
+                             QColor(PLOTTER_FILTER_BOX_COLOR));
+
+            painter.fillRect(upperX, 0, upperWidth, h,
+                             QColor(PLOTTER_FILTER_BOX_COLOR));
+        }
+        else
+        {
+            int dw = m_DemodHiCutFreqX - m_DemodLowCutFreqX;
+
+            painter.fillRect(m_DemodLowCutFreqX, 0, dw, h,
+                             QColor(PLOTTER_FILTER_BOX_COLOR));
+        }
 
         painter.setOpacity(1.0);
         painter.setPen(QColor(PLOTTER_FILTER_LINE_COLOR));

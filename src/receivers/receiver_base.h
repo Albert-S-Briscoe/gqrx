@@ -99,6 +99,10 @@ public:
     virtual void set_amsync_dcr(bool enabled);
     virtual void set_amsync_pll_bw(float pll_bw);
 
+    /* nrsc5 parameters */
+    virtual bool has_nrsc5();
+    virtual void set_nrsc5_program(int program);
+
     virtual void get_rds_data(std::string &outbuff, int &num);
     virtual void start_rds_decoder();
     virtual void stop_rds_decoder();
