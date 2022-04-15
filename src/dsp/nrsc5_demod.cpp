@@ -30,3 +30,8 @@ nrsc5_demod::~nrsc5_demod()
 {
 
 }
+
+void nrsc5_demod::set_program(int program)
+{
+    nrsc5_rx->set_program(program);
+}

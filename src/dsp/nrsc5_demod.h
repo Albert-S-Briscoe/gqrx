@@ -37,6 +37,7 @@ protected:
 
 public:
     ~nrsc5_demod();
+    void set_program(int program);
 
 private:
     /* GR blocks */

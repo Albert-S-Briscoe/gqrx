@@ -153,5 +153,5 @@ void digital::set_demod(int rx_demod)
 
 void digital::set_nrsc5_program(int program)
 {
-    std::cerr << "not implemented yet\n";
+    nrsc5->set_program(program);
 }
