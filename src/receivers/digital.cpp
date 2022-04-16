@@ -20,7 +20,7 @@ digital::digital(float quad_rate, float audio_rate)
 {
     iq_resamp = make_resampler_cc(PREF_QUAD_RATE/d_quad_rate);
     filter = make_rx_filter(PREF_QUAD_RATE, -320000.0, 320000.0, 50000.0);
-    nrsc5 = make_nrsc5_demod();
+    nrsc5 = make_rx_demod_nrsc5();
 
     audio_rr0.reset();
     audio_rr1.reset();

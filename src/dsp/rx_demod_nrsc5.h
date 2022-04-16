@@ -1,5 +1,5 @@
-#ifndef NRSC5_DEMOD_H
-#define NRSC5_DEMOD_H
+#ifndef RX_DEMOD_NRSC5_H
+#define RX_DEMOD_NRSC5_H
 
 #include <gnuradio/hier_block2.h>
 #include <gnuradio/filter/firdes.h>
@@ -7,21 +7,21 @@
 #include <gnuradio/blocks/complex_to_interleaved_short.h>
 #include <nrsc5_rx/nrsc5_rx.h>
 
-class nrsc5_demod;
+class rx_demod_nrsc5;
 
 #if GNURADIO_VERSION < 0x030900
-typedef boost::shared_ptr<nrsc5_demod> nrsc5_demod_sptr;
+typedef boost::shared_ptr<rx_demod_nrsc5> rx_demod_nrsc5_sptr;
 #else
-typedef std::shared_ptr<nrsc5_demod> nrsc5_demod_sptr;
+typedef std::shared_ptr<rx_demod_nrsc5> rx_demod_nrsc5_sptr;
 #endif
 
-/*! \brief Return a shared_ptr to a new instance of nrsc5_demod.
+/*! \brief Return a shared_ptr to a new instance of rx_demod_nrsc5.
  *
  * This is effectively the public constructor. To avoid accidental use
  * of raw pointers, stereo_demod's constructor is private.
  * make_stereo_demod is the public interface for creating new instances.
  */
-nrsc5_demod_sptr make_nrsc5_demod();
+rx_demod_nrsc5_sptr make_rx_demod_nrsc5();
 
 /*! \brief FM stereo demodulator.
  *  \ingroup DSP
@@ -29,14 +29,14 @@ nrsc5_demod_sptr make_nrsc5_demod();
  * This class implements the nrsc5 demodulator for FM band NRSC-5 IBOC digital radio.
  *
  */
-class nrsc5_demod : public gr::hier_block2
+class rx_demod_nrsc5 : public gr::hier_block2
 {
-    friend nrsc5_demod_sptr make_nrsc5_demod();
+    friend rx_demod_nrsc5_sptr make_rx_demod_nrsc5();
 protected:
-    nrsc5_demod();
+    rx_demod_nrsc5();
 
 public:
-    ~nrsc5_demod();
+    ~rx_demod_nrsc5();
     void set_program(int program);
     float get_level_db();
 
@@ -47,4 +47,4 @@ private:
 };
 
 
-#endif // NRSC5_DEMOD_H
+#endif // RX_DEMOD_NRSC5_H

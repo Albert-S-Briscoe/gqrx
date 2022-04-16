@@ -1,18 +1,18 @@
 #include <iostream>
-#include <dsp/nrsc5_demod.h>
+#include <dsp/rx_demod_nrsc5.h>
 #include <nrsc5_rx/nrsc5_rx.h>
 
-/* Create a new instance of stereo_demod and return a shared_ptr. */
-nrsc5_demod_sptr make_nrsc5_demod()
+/* Create a new instance of rx_demod_nrsc5 and return a shared_ptr. */
+rx_demod_nrsc5_sptr make_rx_demod_nrsc5()
 {
-    return gnuradio::get_initial_sptr(new nrsc5_demod());
+    return gnuradio::get_initial_sptr(new rx_demod_nrsc5());
 }
 
 /*! \brief Create nrsc5 demodulator object.
  *
- * Use make_nrsc5_demod() instead.
+ * Use make_rx_demod_nrsc5() instead.
  */
-nrsc5_demod::nrsc5_demod()
+rx_demod_nrsc5::rx_demod_nrsc5()
     : gr::hier_block2("stereo_demod",
         gr::io_signature::make (1, 1, sizeof (gr_complex)),
         gr::io_signature::make (2, 2, sizeof (float)))
@@ -26,17 +26,17 @@ nrsc5_demod::nrsc5_demod()
     connect(nrsc5_rx, 1, self(), 1);
 }
 
-nrsc5_demod::~nrsc5_demod()
+rx_demod_nrsc5::~rx_demod_nrsc5()
 {
 
 }
 
-void nrsc5_demod::set_program(int program)
+void rx_demod_nrsc5::set_program(int program)
 {
     nrsc5_rx->set_program(program);
 }
 
-float nrsc5_demod::get_level_db()
+float rx_demod_nrsc5::get_level_db()
 {
     if (nrsc5_rx->get_sync())
     {

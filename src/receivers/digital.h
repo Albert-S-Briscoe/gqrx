@@ -4,7 +4,7 @@
 #include "receivers/receiver_base.h"
 #include "dsp/resampler_xx.h"
 #include "dsp/rx_filter.h"
-#include "dsp/nrsc5_demod.h"
+#include "dsp/rx_demod_nrsc5.h"
 
 class digital;
 
@@ -76,7 +76,7 @@ private:
     resampler_cc_sptr         iq_resamp;   /*!< Baseband resampler. */
     rx_filter_sptr            filter;  /*!< Non-translating bandpass filter.*/
 
-    nrsc5_demod_sptr          nrsc5;
+    rx_demod_nrsc5_sptr          nrsc5;
 
     resampler_ff_sptr         audio_rr0;  /*!< Audio resampler. */
     resampler_ff_sptr         audio_rr1;  /*!< Audio resampler. */

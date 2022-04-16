@@ -49,6 +49,6 @@ add_source_files(SRCS_LIST
 	sniffer_f.h
 	stereo_demod.cpp
 	stereo_demod.h
-        nrsc5_demod.cpp
-        nrsc5_demod.h
+	rx_demod_nrsc5.cpp
+	rx_demod_nrsc5.h
 )
