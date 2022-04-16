@@ -35,3 +35,12 @@ void nrsc5_demod::set_program(int program)
 {
     nrsc5_rx->set_program(program);
 }
+
+float nrsc5_demod::get_level_db()
+{
+    if (nrsc5_rx->get_sync())
+    {
+        return 0.0;
+    }
+    return -100.0;
+}

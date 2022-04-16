@@ -89,7 +89,7 @@ void digital::set_cw_offset(double offset)
 
 float digital::get_signal_level()
 {
-    return 0.0;
+    return nrsc5->get_level_db();
 }
 
 void digital::set_demod(int rx_demod)

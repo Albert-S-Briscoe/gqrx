@@ -38,6 +38,7 @@ protected:
 public:
     ~nrsc5_demod();
     void set_program(int program);
+    float get_level_db();
 
 private:
     /* GR blocks */
