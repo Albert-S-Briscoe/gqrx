@@ -168,5 +168,15 @@ void DockRDS::setRDSmode(bool cmd)
 void DockRDS::setCurrentPage(int index)
 {
     if (index < PAGE_NUM)
+    {
         ui->stackedWidget->setCurrentIndex(index);
+
+        // The checkbox was causing some crashes
+        if (index != PAGE_RDS)
+        {
+            ui->rdsCheckbox->blockSignals(true);
+            ui->rdsCheckbox->setChecked(false);
+            ui->rdsCheckbox->blockSignals(false);
+        }
+    }
 }
