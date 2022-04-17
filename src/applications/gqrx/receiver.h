@@ -229,6 +229,7 @@ public:
 
     /* rds functions */
     void        get_rds_data(std::string &outbuff, int &num);
+    void        get_sis_data(std::string (&outbuff)[6], int &num);
     void        start_rds_decoder(void);
     void        stop_rds_decoder();
     bool        is_rds_decoder_active(void) const;

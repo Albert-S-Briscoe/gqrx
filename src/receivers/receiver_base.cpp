@@ -165,6 +165,12 @@ void receiver_base_cf::get_rds_data(std::string &outbuff, int &num)
         (void) num;
 }
 
+void receiver_base_cf::get_sis_data(std::string (&outbuff)[6], int &num)
+{
+        (void) outbuff;
+        (void) num;
+}
+
 void receiver_base_cf::start_rds_decoder()
 {
 }

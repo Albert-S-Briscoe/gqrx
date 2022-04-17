@@ -31,7 +31,7 @@ DockRDS::DockRDS(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->scrollArea->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContentsOnFirstShow);
+    ui->rdsText->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContentsOnFirstShow);
 }
 
 DockRDS::~DockRDS()
@@ -92,6 +92,16 @@ void DockRDS::updateRDS(QString text, int type)
     }
 }
 
+void DockRDS::updateSIS(std::string text[6], int type)
+{
+    ui->nrsc5_station_name->setText(QString::fromStdString(text[0]));
+    ui->nrsc5_slogan->setText(QString::fromStdString(text[1]));
+    ui->nrsc5_message->setText(QString::fromStdString(text[2]));
+    ui->nrsc5_alert->setText(QString::fromStdString(text[3]));
+    ui->nrsc5_country_code->setText(QString::fromStdString(text[4]));
+    ui->nrsc5_facility_id->setText(QString::fromStdString(text[5]));
+}
+
 void DockRDS::ClearTextFields()
 {
     ui->program_information->setText("");
@@ -101,6 +111,14 @@ void DockRDS::ClearTextFields()
     ui->radiotext->setText("");
     ui->clocktime->setText("");
     ui->alt_freq->setText("");
+
+    /* NRSC-5 SIS */
+    ui->nrsc5_alert->setText("");
+    ui->nrsc5_country_code->setText("");
+    ui->nrsc5_facility_id->setText("");
+    ui->nrsc5_message->setText("");
+    ui->nrsc5_slogan->setText("");
+    ui->nrsc5_station_name->setText("");
 }
 
 void DockRDS::showEnabled()
@@ -119,7 +137,7 @@ void DockRDS::showDisabled()
     ClearTextFields();
 }
 
-void DockRDS::setDisabled()
+/*void DockRDS::setDisabled()
 {
     ui->rdsCheckbox->setDisabled(true);
     ui->rdsCheckbox->blockSignals(true);
@@ -130,7 +148,7 @@ void DockRDS::setDisabled()
 void DockRDS::setEnabled()
 {
     ui->rdsCheckbox->setDisabled(false);
-}
+}*/
 
 /** Enable/disable RDS decoder */
 void DockRDS::on_rdsCheckbox_toggled(bool checked)
@@ -145,4 +163,10 @@ void DockRDS::setRDSmode(bool cmd)
         return;
 
     ui->rdsCheckbox->setChecked(cmd);
+}
+
+void DockRDS::setCurrentPage(int index)
+{
+    if (index < PAGE_NUM)
+        ui->stackedWidget->setCurrentIndex(index);
 }

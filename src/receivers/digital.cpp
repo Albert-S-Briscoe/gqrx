@@ -21,6 +21,7 @@ digital::digital(float quad_rate, float audio_rate)
     iq_resamp = make_resampler_cc(PREF_QUAD_RATE/d_quad_rate);
     filter = make_rx_filter(PREF_QUAD_RATE, -320000.0, 320000.0, 50000.0);
     nrsc5 = make_rx_demod_nrsc5();
+    rds_store = make_rx_demod_nrsc5_store();
 
     audio_rr0.reset();
     audio_rr1.reset();
@@ -49,6 +50,7 @@ digital::digital(float quad_rate, float audio_rate)
         connect(nrsc5, 0, self(), 0);
         connect(nrsc5, 1, self(), 1);
     }
+    msg_connect(nrsc5, "SIS", rds_store, "store");
 }
 
 bool digital::start()
@@ -155,3 +157,40 @@ void digital::set_nrsc5_program(int program)
 {
     nrsc5->set_program(program);
 }
+
+void digital::get_sis_data(std::string (&outbuff)[6], int &num)
+{
+    rds_store->get_message(outbuff, num);
+}
+
+/*
+void digital::start_rds_decoder()
+{
+    connect(demod_fm, 0, rds, 0);
+    connect(rds, 0, rds_decoder, 0);
+    msg_connect(rds_decoder, "out", rds_parser, "in");
+    msg_connect(rds_parser, "out", rds_store, "store");
+    rds_enabled=true;
+}
+
+void digital::stop_rds_decoder()
+{
+    lock();
+    disconnect(demod_fm, 0, rds, 0);
+    disconnect(rds, 0, rds_decoder, 0);
+    msg_disconnect(rds_decoder, "out", rds_parser, "in");
+    msg_disconnect(rds_parser, "out", rds_store, "store");
+    unlock();
+    rds_enabled=false;
+}
+
+void digital::reset_rds_parser()
+{
+    rds_parser->reset();
+}
+
+bool digital::is_rds_decoder_active()
+{
+    return rds_enabled;
+}
+*/

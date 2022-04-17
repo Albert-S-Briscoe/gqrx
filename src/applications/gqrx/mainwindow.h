@@ -105,6 +105,8 @@ private:
     Afsk1200Win    *dec_afsk1200;
     bool            dec_rds{};
 
+    bool            d_rds_sis; /*!< Whether nrsc5 SIS data is being used instead of RDS */
+
     QTimer   *dec_timer;
     QTimer   *meter_timer;
     QTimer   *iq_fft_timer;

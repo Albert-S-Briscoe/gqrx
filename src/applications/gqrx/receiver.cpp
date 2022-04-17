@@ -1423,6 +1423,11 @@ void receiver::get_rds_data(std::string &outbuff, int &num)
     rx->get_rds_data(outbuff, num);
 }
 
+void receiver::get_sis_data(std::string (&outbuff)[6], int &num)
+{
+    rx->get_sis_data(outbuff, num);
+}
+
 void receiver::start_rds_decoder(void)
 {
     if (d_running)

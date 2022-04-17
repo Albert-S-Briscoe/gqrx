@@ -16,12 +16,23 @@ public:
     explicit DockRDS(QWidget *parent = 0);
     ~DockRDS();
 
+    enum page {
+        PAGE_DISABLED = 0,
+        PAGE_RDS = 1,
+        PAGE_SIS = 2,
+        PAGE_NUM = 3
+    };
+
+    void setCurrentPage(int index);
+    int  currentPage() const;
+
 public slots:
     void updateRDS(QString text, int type);
+    void updateSIS(std::string text[6], int type);
     void showEnabled();
     void showDisabled();
-    void setEnabled();
-    void setDisabled();
+/*    void setEnabled();
+    void setDisabled();*/
     void setRDSmode(bool cmd);
 
 private:

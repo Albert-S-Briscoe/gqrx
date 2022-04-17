@@ -311,6 +311,8 @@ MainWindow::MainWindow(const QString& cfgfile, bool edit_conf, QWidget *parent) 
     rds_timer = new QTimer(this);
     connect(rds_timer, SIGNAL(timeout()), this, SLOT(rdsTimeout()));
 
+    d_rds_sis = false;
+
     // enable frequency tooltips on FFT plot
     ui->plotter->setTooltipsEnabled(true);
 
@@ -1072,7 +1074,9 @@ void MainWindow::selectDemod(int mode_idx)
     rds_enabled = rx->is_rds_decoder_active();
     if (rds_enabled)
         setRdsDecoder(false);
-    uiDockRDS->setDisabled();
+//    uiDockRDS->setDisabled();
+    uiDockRDS->setCurrentPage(DockRDS::PAGE_DISABLED);
+    d_rds_sis = false;
 
     switch (mode_idx) {
 
@@ -1136,7 +1140,8 @@ void MainWindow::selectDemod(int mode_idx)
         else
             rx->set_demod(receiver::RX_DEMOD_WFM_S);
 
-        uiDockRDS->setEnabled();
+//        uiDockRDS->setEnabled();
+        uiDockRDS->setCurrentPage(DockRDS::PAGE_RDS);
         if (rds_enabled)
             setRdsDecoder(true);
         break;
@@ -1148,6 +1153,10 @@ void MainWindow::selectDemod(int mode_idx)
         uiDockAudio->setFftRange(0,22050);
         doubleSideband = true;
         click_res = 100;
+
+        uiDockRDS->setCurrentPage(DockRDS::PAGE_SIS);
+        d_rds_sis = true;
+        setRdsDecoder(true);
         break;
 
     case DockRxOpt::MODE_LSB:
@@ -1463,13 +1472,26 @@ void MainWindow::audioFftTimeout()
 /** RDS message display timeout. */
 void MainWindow::rdsTimeout()
 {
-    std::string buffer;
     int num;
+    if (d_rds_sis)
+    {
+        std::string buffer[6];
 
-    rx->get_rds_data(buffer, num);
-    while(num!=-1) {
-        uiDockRDS->updateRDS(QString::fromStdString(buffer), num);
+        rx->get_sis_data(buffer, num);
+        while(num!=-1) {
+            uiDockRDS->updateSIS(buffer, num);
+            rx->get_sis_data(buffer, num);
+        }
+    }
+    else
+    {
+        std::string buffer;
+
         rx->get_rds_data(buffer, num);
+        while(num!=-1) {
+            uiDockRDS->updateRDS(QString::fromStdString(buffer), num);
+            rx->get_rds_data(buffer, num);
+        }
     }
 }
 

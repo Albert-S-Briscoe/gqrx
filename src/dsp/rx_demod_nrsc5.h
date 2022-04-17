@@ -6,13 +6,18 @@
 
 #include <gnuradio/blocks/complex_to_interleaved_short.h>
 #include <nrsc5_rx/nrsc5_rx.h>
+#include <mutex>
+#include <queue>
 
 class rx_demod_nrsc5;
+class rx_demod_nrsc5_store;
 
 #if GNURADIO_VERSION < 0x030900
 typedef boost::shared_ptr<rx_demod_nrsc5> rx_demod_nrsc5_sptr;
+typedef boost::shared_ptr<rx_demod_nrsc5_store> rx_demod_nrsc5_store_sptr;
 #else
 typedef std::shared_ptr<rx_demod_nrsc5> rx_demod_nrsc5_sptr;
+typedef std::shared_ptr<rx_demod_nrsc5_store> rx_demod_nrsc5_store_sptr;
 #endif
 
 /*! \brief Return a shared_ptr to a new instance of rx_demod_nrsc5.
@@ -22,6 +27,7 @@ typedef std::shared_ptr<rx_demod_nrsc5> rx_demod_nrsc5_sptr;
  * make_stereo_demod is the public interface for creating new instances.
  */
 rx_demod_nrsc5_sptr make_rx_demod_nrsc5();
+rx_demod_nrsc5_store_sptr make_rx_demod_nrsc5_store();
 
 /*! \brief FM stereo demodulator.
  *  \ingroup DSP
@@ -46,5 +52,21 @@ private:
     gr::blocks::complex_to_interleaved_short::sptr          type_converter;
 };
 
+
+class rx_demod_nrsc5_store : public gr::block
+{
+public:
+    rx_demod_nrsc5_store();
+    ~rx_demod_nrsc5_store();
+
+    void get_message(std::string (&out)[6], int &type);
+
+private:
+    void store(pmt::pmt_t msg);
+
+    std::mutex d_mutex;
+    std::queue<pmt::pmt_t> d_messages;
+
+};
 
 #endif // RX_DEMOD_NRSC5_H

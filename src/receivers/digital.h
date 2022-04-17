@@ -66,6 +66,8 @@ public:
     bool has_nrsc5() {return true; }
     void set_nrsc5_program(int program);
 
+    void get_sis_data(std::string (&outbuff)[6], int &num);
+
 private:
     bool   d_running;          /*!< Whether receiver is running or not. */
     float  d_quad_rate;        /*!< Input sample rate. */
@@ -76,10 +78,13 @@ private:
     resampler_cc_sptr         iq_resamp;   /*!< Baseband resampler. */
     rx_filter_sptr            filter;  /*!< Non-translating bandpass filter.*/
 
-    rx_demod_nrsc5_sptr          nrsc5;
+    rx_demod_nrsc5_sptr       nrsc5;
 
     resampler_ff_sptr         audio_rr0;  /*!< Audio resampler. */
     resampler_ff_sptr         audio_rr1;  /*!< Audio resampler. */
+
+    rx_demod_nrsc5_store_sptr rds_store; /*!< RDS decoded messages */
+
 };
 
 #endif // NRSC5_H
