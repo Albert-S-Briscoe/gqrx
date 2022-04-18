@@ -30,7 +30,7 @@ rx_demod_nrsc5::rx_demod_nrsc5()
     connect(nrsc5_rx, 0, self(), 0);
     connect(nrsc5_rx, 1, self(), 1);
 
-    msg_connect(nrsc5_rx, "SIS", self(), "SIS");
+    msg_connect(nrsc5_rx, "out", self(), "SIS");
 }
 
 rx_demod_nrsc5::~rx_demod_nrsc5()
@@ -77,9 +77,11 @@ void rx_demod_nrsc5_store::get_message(std::string (&out)[6], int &type)
     std::lock_guard<std::mutex> lock(d_mutex);
     if (d_messages.size()>0) {
         pmt::pmt_t msg=d_messages.front();
-        for (int i = 0; i < 6; i++)
+        type=pmt::to_long(pmt::tuple_ref(msg,0));
+
+        for (int i = 0; i < (type == 0 ? 6 : 4); i++)
         {
-            out[i] = pmt::symbol_to_string(pmt::tuple_ref(msg, i));
+            out[i] = pmt::symbol_to_string(pmt::tuple_ref(msg, i + 1));
         }
         d_messages.pop();
     } else {

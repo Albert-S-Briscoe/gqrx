@@ -28,7 +28,8 @@ public:
 
 public slots:
     void updateRDS(QString text, int type);
-    void updateSIS(std::string text[6], int type);
+    void updateSIS(std::string text[6]);
+    void updateID3(std::string text[4]);
     void showEnabled();
     void showDisabled();
 /*    void setEnabled();

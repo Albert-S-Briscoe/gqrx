@@ -188,9 +188,8 @@ void digital::reset_rds_parser()
 {
     rds_parser->reset();
 }
-
+*/
 bool digital::is_rds_decoder_active()
 {
-    return rds_enabled;
+    return true;
 }
-*/

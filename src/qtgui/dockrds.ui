@@ -9,13 +9,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>215</width>
+    <width>229</width>
     <height>220</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>125</width>
+    <width>229</width>
     <height>108</height>
    </size>
   </property>
@@ -23,7 +23,7 @@
    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
   </property>
   <property name="windowTitle">
-   <string>RDS/SIS</string>
+   <string>Broadcast Information</string>
   </property>
   <widget class="QStackedWidget" name="stackedWidget">
    <property name="currentIndex">
@@ -34,7 +34,7 @@
      <item>
       <widget class="QLabel" name="label_14">
        <property name="text">
-        <string>RDS/SIS not supported</string>
+        <string>Broadcast information not supported</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -58,7 +58,7 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>215</width>
+       <width>229</width>
        <height>201</height>
       </rect>
      </property>
@@ -331,7 +331,7 @@
        <x>0</x>
        <y>0</y>
        <width>215</width>
-       <height>201</height>
+       <height>243</height>
       </rect>
      </property>
      <layout class="QFormLayout" name="nrsc5FormLayout">
@@ -354,9 +354,9 @@
        <number>5</number>
       </property>
       <item row="0" column="0">
-       <widget class="QLabel" name="label_8">
+       <widget class="QLabel" name="label_17">
         <property name="text">
-         <string>Station Name:</string>
+         <string>Title:</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -364,7 +364,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLabel" name="nrsc5_station_name">
+       <widget class="QLabel" name="nrsc5_title">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -383,9 +383,9 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label_9">
+       <widget class="QLabel" name="label_18">
         <property name="text">
-         <string>Slogan:</string>
+         <string>Artist:</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -393,7 +393,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QLabel" name="nrsc5_slogan">
+       <widget class="QLabel" name="nrsc5_artist">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -412,9 +412,9 @@
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="label_10">
+       <widget class="QLabel" name="label_19">
         <property name="text">
-         <string>Message:</string>
+         <string>Album:</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -422,7 +422,7 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QLabel" name="nrsc5_message">
+       <widget class="QLabel" name="nrsc5_album">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -441,6 +441,135 @@
        </widget>
       </item>
       <item row="3" column="0">
+       <widget class="QLabel" name="label_20">
+        <property name="text">
+         <string>Genre:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLabel" name="nrsc5_genre">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="Line" name="line">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>Station Name:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLabel" name="nrsc5_station_name">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="label_9">
+        <property name="text">
+         <string>Slogan:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QLabel" name="nrsc5_slogan">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="label_10">
+        <property name="text">
+         <string>Message:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QLabel" name="nrsc5_message">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0">
        <widget class="QLabel" name="label_11">
         <property name="text">
          <string>Alert:</string>
@@ -450,7 +579,7 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
+      <item row="8" column="1">
        <widget class="QLabel" name="nrsc5_alert">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -469,7 +598,7 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
+      <item row="9" column="0">
        <widget class="QLabel" name="label_12">
         <property name="text">
          <string>Country Code:</string>
@@ -479,7 +608,7 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
+      <item row="9" column="1">
        <widget class="QLabel" name="nrsc5_country_code">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -498,7 +627,7 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="0">
+      <item row="10" column="0">
        <widget class="QLabel" name="label_13">
         <property name="text">
          <string>Facility ID:</string>
@@ -508,7 +637,7 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="1">
+      <item row="10" column="1">
        <widget class="QLabel" name="nrsc5_facility_id">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">

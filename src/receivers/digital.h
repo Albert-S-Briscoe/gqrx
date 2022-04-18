@@ -67,6 +67,7 @@ public:
     void set_nrsc5_program(int program);
 
     void get_sis_data(std::string (&outbuff)[6], int &num);
+    bool is_rds_decoder_active();
 
 private:
     bool   d_running;          /*!< Whether receiver is running or not. */

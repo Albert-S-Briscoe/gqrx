@@ -1479,7 +1479,10 @@ void MainWindow::rdsTimeout()
 
         rx->get_sis_data(buffer, num);
         while(num!=-1) {
-            uiDockRDS->updateSIS(buffer, num);
+            if (num == 0)
+                uiDockRDS->updateSIS(buffer);
+            if (num == 1)
+                uiDockRDS->updateID3(buffer);
             rx->get_sis_data(buffer, num);
         }
     }

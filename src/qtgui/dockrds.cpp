@@ -92,7 +92,7 @@ void DockRDS::updateRDS(QString text, int type)
     }
 }
 
-void DockRDS::updateSIS(std::string text[6], int type)
+void DockRDS::updateSIS(std::string text[6])
 {
     ui->nrsc5_station_name->setText(QString::fromStdString(text[0]));
     ui->nrsc5_slogan->setText(QString::fromStdString(text[1]));
@@ -100,6 +100,13 @@ void DockRDS::updateSIS(std::string text[6], int type)
     ui->nrsc5_alert->setText(QString::fromStdString(text[3]));
     ui->nrsc5_country_code->setText(QString::fromStdString(text[4]));
     ui->nrsc5_facility_id->setText(QString::fromStdString(text[5]));
+}
+void DockRDS::updateID3(std::string text[4])
+{
+    ui->nrsc5_title->setText(QString::fromStdString(text[0]));
+    ui->nrsc5_artist->setText(QString::fromStdString(text[1]));
+    ui->nrsc5_album->setText(QString::fromStdString(text[2]));
+    ui->nrsc5_genre->setText(QString::fromStdString(text[3]));
 }
 
 void DockRDS::ClearTextFields()
