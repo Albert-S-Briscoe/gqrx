@@ -22,7 +22,7 @@ rx_demod_nrsc5::rx_demod_nrsc5()
         gr::io_signature::make (2, 2, sizeof (float)))
 {
     type_converter = gr::blocks::complex_to_interleaved_short::make(true, 32767);
-    nrsc5_rx = gr::nrsc5_rx::nrsc5_rx::make(0, true);
+    nrsc5_rx = gr::nrsc5_rx::nrsc5_rx::make(0);
     message_port_register_hier_out(pmt::mp("SIS"));
 
     connect(self(), 0, type_converter, 0);
