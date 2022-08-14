@@ -1074,7 +1074,6 @@ void MainWindow::selectDemod(int mode_idx)
     rds_enabled = rx->is_rds_decoder_active();
     if (rds_enabled)
         setRdsDecoder(false);
-//    uiDockRDS->setDisabled();
     uiDockRDS->setCurrentPage(DockRDS::PAGE_DISABLED);
     d_rds_sis = false;
 
@@ -1140,7 +1139,6 @@ void MainWindow::selectDemod(int mode_idx)
         else
             rx->set_demod(receiver::RX_DEMOD_WFM_S);
 
-//        uiDockRDS->setEnabled();
         uiDockRDS->setCurrentPage(DockRDS::PAGE_RDS);
         if (rds_enabled)
             setRdsDecoder(true);

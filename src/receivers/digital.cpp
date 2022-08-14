@@ -163,32 +163,6 @@ void digital::get_sis_data(std::string (&outbuff)[6], int &num)
     rds_store->get_message(outbuff, num);
 }
 
-/*
-void digital::start_rds_decoder()
-{
-    connect(demod_fm, 0, rds, 0);
-    connect(rds, 0, rds_decoder, 0);
-    msg_connect(rds_decoder, "out", rds_parser, "in");
-    msg_connect(rds_parser, "out", rds_store, "store");
-    rds_enabled=true;
-}
-
-void digital::stop_rds_decoder()
-{
-    lock();
-    disconnect(demod_fm, 0, rds, 0);
-    disconnect(rds, 0, rds_decoder, 0);
-    msg_disconnect(rds_decoder, "out", rds_parser, "in");
-    msg_disconnect(rds_parser, "out", rds_store, "store");
-    unlock();
-    rds_enabled=false;
-}
-
-void digital::reset_rds_parser()
-{
-    rds_parser->reset();
-}
-*/
 bool digital::is_rds_decoder_active()
 {
     return true;

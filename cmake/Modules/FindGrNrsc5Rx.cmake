@@ -1,5 +1,3 @@
-message("FindGrNrsc5Rx.cmake")
-
 SET(GRNRSC5RX_SEARCH_PATHS
     /usr
     /usr/local

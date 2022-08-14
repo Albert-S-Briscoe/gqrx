@@ -144,19 +144,6 @@ void DockRDS::showDisabled()
     ClearTextFields();
 }
 
-/*void DockRDS::setDisabled()
-{
-    ui->rdsCheckbox->setDisabled(true);
-    ui->rdsCheckbox->blockSignals(true);
-    ui->rdsCheckbox->setChecked(false);
-    ui->rdsCheckbox->blockSignals(false);
-}
-
-void DockRDS::setEnabled()
-{
-    ui->rdsCheckbox->setDisabled(false);
-}*/
-
 /** Enable/disable RDS decoder */
 void DockRDS::on_rdsCheckbox_toggled(bool checked)
 {
@@ -178,7 +165,7 @@ void DockRDS::setCurrentPage(int index)
     {
         ui->stackedWidget->setCurrentIndex(index);
 
-        // The checkbox was causing some crashes
+        // the checkbox can cause a crash if it is out of sync
         if (index != PAGE_RDS)
         {
             ui->rdsCheckbox->blockSignals(true);

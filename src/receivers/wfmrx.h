@@ -108,8 +108,7 @@ public:
     void reset_rds_parser();
     bool is_rds_decoder_active();
 
-    bool has_nrsc5() {return false; }
-    /*void set_nrsc5_program(int program);*/
+    bool has_nrsc5() { return false; }
 
 private:
     bool   d_running;          /*!< Whether receiver is running or not. */

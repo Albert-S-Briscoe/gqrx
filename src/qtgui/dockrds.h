@@ -32,8 +32,6 @@ public slots:
     void updateID3(std::string text[4]);
     void showEnabled();
     void showDisabled();
-/*    void setEnabled();
-    void setDisabled();*/
     void setRDSmode(bool cmd);
 
 private:

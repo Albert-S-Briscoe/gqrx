@@ -7,6 +7,6 @@ add_source_files(SRCS_LIST
 	receiver_base.h
 	wfmrx.cpp
 	wfmrx.h
-        digital.cpp
-        digital.h
+	digital.cpp
+	digital.h
 )
