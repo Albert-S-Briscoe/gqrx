@@ -17,7 +17,7 @@ namespace nrsc5_rx {
 nrsc5_rx::sptr
 nrsc5_rx::make(int program)
 {
-	return gnuradio::make_block_sptr<nrsc5_rx_impl>(program);
+    return gnuradio::get_initial_sptr(new nrsc5_rx_impl(program));
 }
 
 /*
