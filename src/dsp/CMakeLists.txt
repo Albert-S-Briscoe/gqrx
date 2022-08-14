@@ -17,6 +17,10 @@ add_source_files(SRCS_LIST
 	rds/parser_impl.h
 	rds/parser.h
 	rds/tmc_events.h
+	nrsc5_rx/api.h
+	nrsc5_rx/nrsc5_rx.h
+	nrsc5_rx/nrsc5_rx_impl.cc
+	nrsc5_rx/nrsc5_rx_impl.h
 	agc_impl.cpp
 	agc_impl.h
 	correct_iq_cc.cpp

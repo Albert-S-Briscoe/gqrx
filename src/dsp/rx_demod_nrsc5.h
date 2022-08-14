@@ -5,9 +5,10 @@
 #include <gnuradio/filter/firdes.h>
 
 #include <gnuradio/blocks/complex_to_interleaved_short.h>
-#include <nrsc5_rx/nrsc5_rx.h>
 #include <mutex>
 #include <queue>
+
+#include "dsp/nrsc5_rx/nrsc5_rx.h"
 
 class rx_demod_nrsc5;
 class rx_demod_nrsc5_store;

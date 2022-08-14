@@ -1,6 +1,7 @@
 #include <iostream>
 #include <dsp/rx_demod_nrsc5.h>
-#include <nrsc5_rx/nrsc5_rx.h>
+
+#include "dsp/nrsc5_rx/nrsc5_rx.h"
 
 /* Create a new instance of rx_demod_nrsc5 and return a shared_ptr. */
 rx_demod_nrsc5_sptr make_rx_demod_nrsc5()
