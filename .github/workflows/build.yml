@@ -44,7 +44,9 @@ jobs:
             soapysdr-module-remote \
             libuhd-dev \
             liborc-0.4-dev \
-            libhidapi-dev
+            libhidapi-dev \
+            libao-dev \
+            fftw-dev
 
           cd /tmp
           git clone https://github.com/Nuand/bladeRF.git
