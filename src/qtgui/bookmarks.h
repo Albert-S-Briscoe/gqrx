@@ -30,6 +30,7 @@
 #include <QList>
 #include <QStringList>
 #include <QColor>
+#include <QJsonObject>
 
 struct TagInfo
 {
@@ -121,11 +122,16 @@ public:
     void setConfigDir(const QString&);
 
 private:
+    bool legacyLoad();
+    bool legacySave();
     Bookmarks(); // Singleton Constructor is private.
+
     QList<BookmarkInfo> m_BookmarkList;
-    QList<TagInfo> m_TagList;
-    QString        m_bookmarksFile;
-    static Bookmarks* m_pThis;
+    QList<TagInfo>      m_TagList;
+    QString             m_bookmarksFile;
+    QString             m_legacyBookmarksFile;
+    static Bookmarks*   m_pThis;
+    QJsonObject         m_bookmarkJson;
 
 signals:
     void BookmarksChanged(void);
