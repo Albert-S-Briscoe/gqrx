@@ -91,7 +91,7 @@ jobs:
           cd /tmp
           git clone https://gitea.osmocom.org/sdr/gr-osmosdr.git
           cd gr-osmosdr
-          git checkout gr3.8
+          git checkout origin/gr3.8
           mkdir build
           cd build
           cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_MODULES_DIR=/usr/lib/x86_64-linux-gnu/cmake -DENABLE_PYTHON=False ..
@@ -109,7 +109,7 @@ jobs:
           make install
           ldconfig
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Configure
@@ -124,20 +124,20 @@ jobs:
       - name: Build AppImage
         run: ./appimage.sh
       - name: Save artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: gqrx-appimage-${{ github.run_id }}
           path: Gqrx-*.AppImage
   macos:
     name: MacOS
-    runs-on: macos-10.15
+    runs-on: macos-11
     steps:
       - name: Install dependencies
         run: |
           brew update
-          brew install airspy airspyhf boost dylibbundler gnuradio hackrf libbladerf librtlsdr libserialport portaudio pybind11 uhd qt@6
+          brew install airspy airspyhf boost dylibbundler gnuradio hackrf libbladerf librtlsdr libserialport portaudio pybind11 uhd qt@6 || true
           brew tap pothosware/homebrew-pothos
-          brew install soapysdr soapyremote
+          brew install soapyremote
 
           cd /tmp
           git clone https://github.com/analogdevicesinc/libiio.git
@@ -213,7 +213,7 @@ jobs:
           security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
           security list-keychain -d user -s $KEYCHAIN_PATH
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Configure
@@ -224,22 +224,24 @@ jobs:
       - name: Build app bundle
         run: ./macos_bundle.sh
       - name: Notarize app bundle
-        uses: devbotsxyz/xcode-notarize@v1
-        with:
-          product-path: Gqrx.app
-          appstore-connect-username: ${{ secrets.NOTARIZE_USERNAME }}
-          appstore-connect-password: ${{ secrets.NOTARIZE_PASSWORD }}
+        env:
+          NOTARIZE_USERNAME: ${{ secrets.NOTARIZE_USERNAME }}
+          NOTARIZE_TEAM_ID: ${{ secrets.NOTARIZE_TEAM_ID }}
+          NOTARIZE_PASSWORD: ${{ secrets.NOTARIZE_PASSWORD }}
+        run: |
+          ditto -c -k --keepParent Gqrx.app Gqrx.zip
+          xcrun notarytool submit Gqrx.zip --apple-id "$NOTARIZE_USERNAME" --team-id "$NOTARIZE_TEAM_ID" --password "$NOTARIZE_PASSWORD" --wait
       - name: Staple app bundle
         run: xcrun stapler staple --verbose Gqrx.app
       - name: Create DMG
         run: hdiutil create Gqrx.dmg -srcfolder Gqrx.app -format UDZO -fs HFS+ -volname Gqrx
       - name: Notarize DMG
-        uses: devbotsxyz/xcode-notarize@v1
-        with:
-          product-path: Gqrx.dmg
-          primary-bundle-id: dk.gqrx.gqrx
-          appstore-connect-username: ${{ secrets.NOTARIZE_USERNAME }}
-          appstore-connect-password: ${{ secrets.NOTARIZE_PASSWORD }}
+        env:
+          NOTARIZE_USERNAME: ${{ secrets.NOTARIZE_USERNAME }}
+          NOTARIZE_TEAM_ID: ${{ secrets.NOTARIZE_TEAM_ID }}
+          NOTARIZE_PASSWORD: ${{ secrets.NOTARIZE_PASSWORD }}
+        run: |
+          xcrun notarytool submit Gqrx.dmg --apple-id "$NOTARIZE_USERNAME" --team-id "$NOTARIZE_TEAM_ID" --password "$NOTARIZE_PASSWORD" --wait
       - name: Staple DMG
         run: xcrun stapler staple --verbose Gqrx.dmg
       - name: Rename DMG
@@ -247,7 +249,7 @@ jobs:
           GQRX_VERSION=$(<version.txt)
           mv Gqrx.dmg Gqrx-$GQRX_VERSION.dmg
       - name: Save artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: gqrx-macos-${{ github.run_id }}
           path: Gqrx-*.dmg

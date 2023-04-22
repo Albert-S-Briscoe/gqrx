@@ -91,16 +91,6 @@ DockRxOpt::DockRxOpt(qint64 filterOffsetRange, QWidget *parent) :
     }
     ui->modeSelector->addItems(ModulationStrings);
 
-#ifdef Q_OS_LINUX
-    ui->modeButton->setMinimumSize(32, 24);
-    ui->agcButton->setMinimumSize(32, 24);
-    ui->autoSquelchButton->setMinimumSize(32, 24);
-    ui->resetSquelchButton->setMinimumSize(32, 24);
-    ui->nbOptButton->setMinimumSize(32, 24);
-    ui->nb2Button->setMinimumSize(32, 24);
-    ui->nb1Button->setMinimumSize(32, 24);
-#endif
-
     ui->filterFreq->setup(7, -filterOffsetRange/2, filterOffsetRange/2, 1,
                           FCTL_UNIT_KHZ);
     ui->filterFreq->setFrequency(0);
@@ -376,6 +366,20 @@ double DockRxOpt::currentSquelchLevel() const
     return ui->sqlSpinBox->value();
 }
 
+bool DockRxOpt::currentAmDcr() const
+{
+    return demodOpt->getDcr();
+}
+
+bool DockRxOpt::currentAmsyncDcr() const
+{
+    return demodOpt->getSyncDcr();
+}
+
+float DockRxOpt::currentAmsyncPll() const
+{
+    return demodOpt->getPllBw();
+}
 
 /** Get filter lo/hi for a given mode and preset */
 void DockRxOpt::getFilterPreset(int mode, int preset, int * lo, int * hi) const
@@ -460,6 +464,14 @@ void DockRxOpt::readSettings(QSettings *settings)
 
     if (settings->value("receiver/agc_off", false).toBool())
         ui->agcPresetCombo->setCurrentIndex(4);
+
+    demodOpt->setDcr(settings->value("receiver/am_dcr", true).toBool());
+
+    demodOpt->setSyncDcr(settings->value("receiver/amsync_dcr", true).toBool());
+
+    int_val = settings->value("receiver/amsync_pllbw", 1000).toInt(&conv_ok);
+    if (conv_ok)
+        demodOpt->setPllBw(int_val / 1.0e6);
 
     int_val = MODE_AM;
     if (settings->contains("receiver/demod")) {
@@ -551,6 +563,22 @@ void DockRxOpt::saveSettings(QSettings *settings)
         settings->setValue("receiver/agc_off", true);
     else
         settings->remove("receiver/agc_off");
+
+    if (!demodOpt->getDcr())
+        settings->setValue("receiver/am_dcr", false);
+    else
+        settings->remove("receiver/am_dcr");
+
+    if (!demodOpt->getSyncDcr())
+        settings->setValue("receiver/amsync_dcr", false);
+    else
+        settings->remove("receiver/amsync_dcr");
+
+    int_val = qRound(currentAmsyncPll() * 1.0e6);
+    if (int_val != 1000)
+        settings->setValue("receiver/amsync_pllbw", int_val);
+    else
+        settings->remove("receiver/amsync_pllbw");
 }
 
 /** RX frequency changed through spin box */

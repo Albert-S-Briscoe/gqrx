@@ -38,15 +38,6 @@ DockAudio::DockAudio(QWidget *parent) :
 {
     ui->setupUi(this);
 
-#ifdef Q_OS_LINUX
-    // buttons can be smaller than 50x32
-    ui->audioMuteButton->setMinimumSize(48, 24);
-    ui->audioStreamButton->setMinimumSize(48, 24);
-    ui->audioRecButton->setMinimumSize(48, 24);
-    ui->audioPlayButton->setMinimumSize(48, 24);
-    ui->audioConfButton->setMinimumSize(48, 24);
-#endif
-
     audioOptions = new CAudioOptions(this);
 
     connect(audioOptions, SIGNAL(newFftSplit(int)), ui->audioSpectrum, SLOT(setPercent2DScreen(int)));
@@ -120,6 +111,14 @@ void DockAudio::setInvertScrolling(bool enabled)
 void DockAudio::setAudioGain(int gain)
 {
     ui->audioGainSlider->setValue(gain);
+}
+
+/*! \brief Set new audio gain.
+ *  \param gain the new audio gain in dB
+ */
+void DockAudio::setAudioGainDb(float gain)
+{
+    ui->audioGainSlider->setValue(int(std::round(gain*10.0)));
 }
 
 

@@ -44,10 +44,10 @@ int tau_to_index(double tau)
     int i;
     for (i = 0; i < tau_tbl_maxidx; i++)
     {
-        if (tau < (tau_tbl[i] + 0.5 * (tau_tbl[i+1] - tau_tbl[i])))
+        if (tau < (tau_tbl[i] + tau_tbl[i+1]) / 2)
             return i;
     }
-    return 0;
+    return tau_tbl_maxidx;
 }
 
 /* convert betweenFM max dev and combo index */
@@ -192,6 +192,26 @@ double CDemodOptions::getEmph(void) const
     return tau_from_index(ui->emphSelector->currentIndex());
 }
 
+void CDemodOptions::setDcr(bool enabled)
+{
+    ui->dcrCheckBox->setChecked(enabled);
+}
+
+bool CDemodOptions::getDcr(void) const
+{
+    return ui->dcrCheckBox->isChecked();
+}
+
+void CDemodOptions::setSyncDcr(bool enabled)
+{
+    ui->syncdcrCheckBox->setChecked(enabled);
+}
+
+bool CDemodOptions::getSyncDcr(void) const
+{
+    return ui->syncdcrCheckBox->isChecked();
+}
+
 void CDemodOptions::on_maxdevSelector_activated(int index)
 {
     emit fmMaxdevSelected(maxdev_from_index(index));
@@ -202,7 +222,7 @@ void CDemodOptions::on_emphSelector_activated(int index)
     emit fmEmphSelected(tau_from_index(index));
 }
 
-void CDemodOptions::on_dcrCheckBox_toggled(bool checked)
+void CDemodOptions::on_dcrCheckBox_clicked(bool checked)
 {
     emit amDcrToggled(checked);
 }
@@ -212,7 +232,7 @@ void CDemodOptions::on_cwOffsetSpin_valueChanged(int value)
     emit cwOffsetChanged(value);
 }
 
-void CDemodOptions::on_syncdcrCheckBox_toggled(bool checked)
+void CDemodOptions::on_syncdcrCheckBox_clicked(bool checked)
 {
     emit amSyncDcrToggled(checked);
 }

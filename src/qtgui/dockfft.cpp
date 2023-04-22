@@ -31,6 +31,7 @@
 #define DEFAULT_FFT_MIN_DB     -120
 #define DEFAULT_FFT_RATE        25
 #define DEFAULT_FFT_SIZE        8192
+#define DEFAULT_FFT_ZOOM        1
 #define DEFAULT_FFT_WINDOW      1       // Hann
 #define DEFAULT_WATERFALL_SPAN  0       // Auto
 #define DEFAULT_FFT_SPLIT       35
@@ -269,10 +270,27 @@ void DockFft::saveSettings(QSettings *settings)
     else
         settings->remove("bandplan");
 
+    // Peak
+    if (ui->peakDetectionButton->isChecked())
+        settings->setValue("peak_detect", true);
+    else
+        settings->remove("peak_detect");
+
+    if (ui->peakHoldButton->isChecked())
+        settings->setValue("peak_hold", true);
+    else
+        settings->remove("peak_hold");
+
     if (QString::compare(ui->cmapComboBox->currentData().toString(), DEFAULT_COLORMAP))
         settings->setValue("waterfall_colormap", ui->cmapComboBox->currentData().toString());
     else
         settings->remove("waterfall_colormap");
+
+    // FFT Zoom
+    if (ui->fftZoomSlider->value() != DEFAULT_FFT_ZOOM)
+        settings->setValue("fft_zoom", ui->fftZoomSlider->value());
+    else
+        settings->remove("fft_zoom");
 
     settings->endGroup();
 }
@@ -345,8 +363,21 @@ void DockFft::readSettings(QSettings *settings)
     ui->bandPlanCheckbox->setChecked(bool_val);
     emit bandPlanChanged(bool_val);
 
+    bool_val = settings->value("peak_detect", false).toBool();
+    ui->peakDetectionButton->setChecked(bool_val);
+    emit peakDetectionToggled(bool_val);
+
+    bool_val = settings->value("peak_hold", false).toBool();
+    ui->peakHoldButton->setChecked(bool_val);
+    emit fftPeakHoldToggled(bool_val);
+
     QString cmap = settings->value("waterfall_colormap", "gqrx").toString();
     ui->cmapComboBox->setCurrentIndex(ui->cmapComboBox->findData(cmap));
+
+    // FFT Zoom
+    intval = settings->value("fft_zoom", DEFAULT_FFT_ZOOM).toInt(&conv_ok);
+    if (conv_ok)
+        ui->fftZoomSlider->setValue(intval);
 
     settings->endGroup();
 }

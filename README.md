@@ -81,7 +81,7 @@ Installation from source
 The source code is hosted on Github: https://github.com/gqrx-sdr/gqrx
 
 To compile gqrx from source you need the following dependencies:
-- GNU Radio 3.7, 3.8, 3.9, or 3.10 with the following components:
+- GNU Radio 3.8, 3.9, or 3.10 with the following components:
     - gnuradio-runtime
     - gnuradio-analog
     - gnuradio-audio
@@ -103,7 +103,7 @@ To compile gqrx from source you need the following dependencies:
     - RFSpace driver is built in
 - gnuradio-osmosdr from https://gitea.osmocom.org/sdr/gr-osmosdr
 - pulseaudio or portaudio (Linux-only and optional)
-- Qt 5 with the following components:
+- Qt 5 or Qt 6 with the following components:
     - Core
     - GUI
     - Network

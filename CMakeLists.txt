@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.2)
 project(gqrx)
 set(${PROJECT_NAME}_MAJOR "2")
 set(${PROJECT_NAME}_MINOR "15")
-set(${PROJECT_NAME}_PATCH "9")
+set(${PROJECT_NAME}_PATCH "10")
 set(IS_RELEASE FALSE)
 
 if(IS_RELEASE)
@@ -150,10 +150,6 @@ math(EXPR GNURADIO_BCD_VERSION
 )
 add_definitions(-DGNURADIO_VERSION=${GNURADIO_BCD_VERSION})
 
-if(Gnuradio_VERSION VERSION_LESS "3.8")
-    find_package(Boost COMPONENTS system REQUIRED)
-endif()
-
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux|FreeBSD")
     if(NOT LINUX_AUDIO_BACKEND)
         set(LINUX_AUDIO_BACKEND Pulseaudio CACHE STRING "Choose the audio backend, options are: Pulseaudio, Portaudio, Gr-audio" FORCE)
@@ -169,11 +165,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux|FreeBSD")
         unset(PORTAUDIO_LIBRARIES CACHE)
     elseif(${LINUX_AUDIO_BACKEND} MATCHES "Portaudio")
         message(STATUS "Portaudio backend enabled")
-        if(Gnuradio_VERSION VERSION_LESS "3.8")
-            find_package(Portaudio REQUIRED)
-        else()
-            find_package(PORTAUDIO REQUIRED)
-        endif()
+        find_package(PORTAUDIO REQUIRED)
         add_definitions(-DWITH_PORTAUDIO)
         unset(PULSEAUDIO_FOUND CACHE)
         unset(PULSEAUDIO_INCLUDE_DIR CACHE)
@@ -205,11 +197,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
     if(${OSX_AUDIO_BACKEND} MATCHES "Portaudio")
         message(STATUS "Portaudio backend enabled")
-        if(Gnuradio_VERSION VERSION_LESS "3.8")
-            find_package(Portaudio REQUIRED)
-        else()
-            find_package(PORTAUDIO REQUIRED)
-        endif()
+        find_package(PORTAUDIO REQUIRED)
         add_definitions(-DWITH_PORTAUDIO)
         unset(PULSEAUDIO_FOUND CACHE)
         unset(PULSEAUDIO_INCLUDE_DIR CACHE)
@@ -258,17 +246,6 @@ link_directories(
     ${GNURADIO_RUNTIME_LIBRARY_DIRS}
     ${ICU4C_LIBRARY_DIRS}
 )
-
-if(Gnuradio_VERSION VERSION_LESS "3.8")
-    include_directories(
-        ${Boost_INCLUDE_DIRS}
-        ${GNURADIO_RUNTIME_INCLUDE_DIRS}
-    )
-
-    link_directories(
-        ${Boost_LIBRARY_DIRS}
-    )
-endif()
 
 # Install desktop
 install(FILES dk.gqrx.gqrx.desktop DESTINATION share/applications)

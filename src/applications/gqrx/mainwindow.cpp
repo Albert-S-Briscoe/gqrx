@@ -153,6 +153,10 @@ MainWindow::MainWindow(const QString& cfgfile, bool edit_conf, QWidget *parent) 
     auto *freq_shortcut = new QShortcut(QKeySequence(Qt::Key_F), this);
     QObject::connect(freq_shortcut, &QShortcut::activated, this, &MainWindow::frequencyFocusShortcut);
 
+    // zero cursor (rx filter offset)
+    auto *rx_offset_zero_shortcut = new QShortcut(QKeySequence(Qt::Key_Z), this);
+    QObject::connect(rx_offset_zero_shortcut, &QShortcut::activated, this, &MainWindow::rxOffsetZeroShortcut);
+
     setCorner(Qt::TopLeftCorner, Qt::LeftDockWidgetArea);
     setCorner(Qt::TopRightCorner, Qt::RightDockWidgetArea);
     setCorner(Qt::BottomLeftCorner, Qt::BottomDockWidgetArea);
@@ -235,6 +239,7 @@ MainWindow::MainWindow(const QString& cfgfile, bool edit_conf, QWidget *parent) 
     connect(uiDockRxOpt, SIGNAL(sqlLevelChanged(double)), this, SLOT(setSqlLevel(double)));
     connect(uiDockRxOpt, SIGNAL(sqlAutoClicked()), this, SLOT(setSqlLevelAuto()));
     connect(uiDockAudio, SIGNAL(audioGainChanged(float)), this, SLOT(setAudioGain(float)));
+    connect(uiDockAudio, SIGNAL(audioGainChanged(float)), remote, SLOT(setAudioGain(float)));
     connect(uiDockAudio, SIGNAL(audioStreamingStarted(QString,int,bool)), this, SLOT(startAudioStream(QString,int,bool)));
     connect(uiDockAudio, SIGNAL(audioStreamingStopped()), this, SLOT(stopAudioStreaming()));
     connect(uiDockAudio, SIGNAL(audioRecStarted(QString)), this, SLOT(startAudioRec(QString)));
@@ -277,6 +282,7 @@ MainWindow::MainWindow(const QString& cfgfile, bool edit_conf, QWidget *parent) 
     // Bookmarks
     connect(uiDockBookmarks, SIGNAL(newBookmarkActivated(qint64, QString, int)), this, SLOT(onBookmarkActivated(qint64, QString, int)));
     connect(uiDockBookmarks->actionAddBookmark, SIGNAL(triggered()), this, SLOT(on_actionAddBookmark_triggered()));
+    connect(&Bookmarks::Get(), SIGNAL(BookmarksChanged()), ui->plotter, SLOT(updateOverlay()));
 
     //DXC Spots
     connect(&DXCSpots::Get(), SIGNAL(dxcSpotsUpdated()), this, SLOT(updateClusterSpots()));
@@ -299,6 +305,7 @@ MainWindow::MainWindow(const QString& cfgfile, bool edit_conf, QWidget *parent) 
     connect(remote, SIGNAL(newMode(int)), uiDockRxOpt, SLOT(setCurrentDemod(int)));
     connect(remote, SIGNAL(newSquelchLevel(double)), this, SLOT(setSqlLevel(double)));
     connect(remote, SIGNAL(newSquelchLevel(double)), uiDockRxOpt, SLOT(setSquelchLevel(double)));
+    connect(remote, SIGNAL(newAudioGain(float)), uiDockAudio, SLOT(setAudioGainDb(float)));
     connect(uiDockRxOpt, SIGNAL(sqlLevelChanged(double)), remote, SLOT(setSquelchLevel(double)));
     connect(remote, SIGNAL(startAudioRecorderEvent()), uiDockAudio, SLOT(startAudioRecorder()));
     connect(remote, SIGNAL(stopAudioRecorderEvent()), uiDockAudio, SLOT(stopAudioRecorder()));
@@ -1104,6 +1111,7 @@ void MainWindow::selectDemod(int mode_idx)
 
     case DockRxOpt::MODE_AM:
         rx->set_demod(receiver::RX_DEMOD_AM);
+        rx->set_am_dcr(uiDockRxOpt->currentAmDcr());
         ui->plotter->setDemodRanges(-40000, -200, 200, 40000, true);
         uiDockAudio->setFftRange(0,6000);
         click_res = 100;
@@ -1111,6 +1119,8 @@ void MainWindow::selectDemod(int mode_idx)
 
     case DockRxOpt::MODE_AM_SYNC:
         rx->set_demod(receiver::RX_DEMOD_AMSYNC);
+        rx->set_amsync_dcr(uiDockRxOpt->currentAmsyncDcr());
+        rx->set_amsync_pll_bw(uiDockRxOpt->currentAmsyncPll());
         ui->plotter->setDemodRanges(-40000, -200, 200, 40000, true);
         uiDockAudio->setFftRange(0,6000);
         click_res = 100;
@@ -2370,7 +2380,7 @@ void MainWindow::on_actionAbout_triggered()
 {
     QMessageBox::about(this, tr("About Gqrx"),
         tr("<p>This is Gqrx %1</p>"
-           "<p>Copyright (C) 2011-2022 Alexandru Csete & contributors.</p>"
+           "<p>Copyright (C) 2011-2023 Alexandru Csete & contributors.</p>"
            "<p>Gqrx is a software defined radio (SDR) receiver powered by "
            "<a href='https://www.gnuradio.org/'>GNU Radio</a> and the Qt toolkit. "
            "<p>Gqrx uses the <a href='https://osmocom.org/projects/gr-osmosdr/wiki/GrOsmoSDR'>GrOsmoSDR</a> "
@@ -2460,16 +2470,14 @@ void MainWindow::on_actionAddBookmark_triggered()
         info.name=name;
         info.tags.clear();
         if (tags.empty())
-            info.tags.append(&Bookmarks::Get().findOrAddTag(""));
+            info.tags.append(Bookmarks::Get().findOrAddTag(""));
 
 
         for (i = 0; i < tags.size(); ++i)
-            info.tags.append(&Bookmarks::Get().findOrAddTag(tags[i]));
+            info.tags.append(Bookmarks::Get().findOrAddTag(tags[i]));
 
         Bookmarks::Get().add(info);
         uiDockBookmarks->updateTags();
-        uiDockBookmarks->updateBookmarks();
-        ui->plotter->updateOverlay();
     }
 }
 
@@ -2481,4 +2489,9 @@ void MainWindow::updateClusterSpots()
 void MainWindow::frequencyFocusShortcut()
 {
     ui->freqCtrl->setFrequencyFocus();
+}
+
+void MainWindow::rxOffsetZeroShortcut()
+{
+    uiDockRxOpt->setFilterOffset(0);
 }

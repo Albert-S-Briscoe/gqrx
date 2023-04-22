@@ -24,14 +24,8 @@
 #define RX_FILTER_H
 
 #include <gnuradio/hier_block2.h>
-
-#if GNURADIO_VERSION < 0x030800
-#include <gnuradio/filter/fir_filter_ccc.h>
-#include <gnuradio/filter/freq_xlating_fir_filter_ccc.h>
-#else
 #include <gnuradio/filter/fir_filter_blk.h>
 #include <gnuradio/filter/freq_xlating_fir_filter.h>
-#endif
 
 
 #define RX_FILTER_MIN_WIDTH 100  /*! Minimum width of filter */
@@ -124,7 +118,7 @@ rx_xlating_filter_sptr make_rx_xlating_filter(double sample_rate,
  * required to generate complex band pass filter taps. It provides a simple
  * interface to set the filter offset and limits and takes care of generating
  * the appropriate taps according to the limits.
- * 
+ *
  * The filter limits are relative to the filter offset and thanks to the complex taps
  * they can be both positive and negative.
  *
