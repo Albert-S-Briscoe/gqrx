@@ -8,13 +8,8 @@
 #ifndef INCLUDED_NRSC5_RX_NRSC5_RX_H
 #define INCLUDED_NRSC5_RX_NRSC5_RX_H
 
+#include <nrsc5_rx/api.h>
 #include <gnuradio/block.h>
-
-#include "dsp/nrsc5_rx/api.h"
-
-extern "C" {
-#include <nrsc5.h>
-}
 
 namespace gr {
 namespace nrsc5_rx {
@@ -37,9 +32,9 @@ public:
 	 * class. nrsc5_rx::nrsc5_rx::make is the public interface for
 	 * creating new instances.
 	 */
-	static sptr make(int program=0);
+	static sptr make(unsigned int program=0);
 
-	virtual void set_program(int program) = 0;
+	virtual void set_program(unsigned int program) = 0;
 	virtual int get_sync() {return -100.0;};
 };
 

@@ -15,29 +15,27 @@ namespace gr {
 namespace nrsc5_rx {
 
 nrsc5_rx::sptr
-nrsc5_rx::make(int program)
+nrsc5_rx::make(unsigned int program)
 {
-    return gnuradio::get_initial_sptr(new nrsc5_rx_impl(program));
+	return gnuradio::make_block_sptr<nrsc5_rx_impl>(program);
 }
 
 /*
  * The private constructor
  */
-nrsc5_rx_impl::nrsc5_rx_impl(int program)
+nrsc5_rx_impl::nrsc5_rx_impl(unsigned int program)
 	: gr::block("nrsc5_rx",
 	            gr::io_signature::make(1 /* min inputs */, 1 /* max inputs */, 2 * sizeof(int16_t)),
-	            gr::io_signature::make(2 /* min outputs */, 2 /*max outputs */, sizeof(float)))
+	            gr::io_signature::make(2 /* min outputs */, 2 /*max outputs */, sizeof(float))),
+	nrsc5_sync(0),
+	new_sis_message(false),
+	new_id3_message(false),
+	_program(program)
 {
 	message_port_register_out(pmt::mp("out"));
 
-	nrsc5_sync = 0;
-	new_sis_message = false;
-	new_id3_message = false;
-
-	if ((program >= 0) && (program < 4))
-		_program = program;
-	else {
-		std::cerr << "gr-nrsc5_rx: Warning: " << program << " is not a valid program number.\n";
+	if (_program > 3) {
+		std::cerr << "gr-nrsc5_rx: Warning: " << _program << " is not a valid program number.\n";
 		_program = 0;
 	}
 
@@ -45,7 +43,7 @@ nrsc5_rx_impl::nrsc5_rx_impl(int program)
 		throw std::runtime_error("nrsc5_rx_impl: nrsc5_open_pipe failed");
 
 	nrsc5_set_auto_gain(nrsc5, 1);
-	nrsc5_set_callback(nrsc5, nrsc5_rx_callback, NULL);
+	nrsc5_set_callback(nrsc5, nrsc5_rx_callback, this);
 
 	nrsc5_start(nrsc5);
 }
@@ -58,13 +56,10 @@ nrsc5_rx_impl::~nrsc5_rx_impl() {
 	nrsc5_close(nrsc5);
 }
 
-void
-nrsc5_rx_impl::forecast (int noutput_items, gr_vector_int &ninput_items_required) {
+void nrsc5_rx_impl::forecast (int noutput_items, gr_vector_int &ninput_items_required) {
 	/* <+forecast+> e.g. ninput_items_required[0] = noutput_items */
 	unsigned ninputs = ninput_items_required.size ();
 	for(unsigned i = 0; i < ninputs; i++) {
-//		ninput_items_required[i] = noutput_items;
-//		std::cerr << "input" << i << " needs: " << (noutput_items * 135) / 8 << "\n";
 		ninput_items_required[i] = (noutput_items * 135) / 8;
 	}
 
@@ -72,11 +67,10 @@ nrsc5_rx_impl::forecast (int noutput_items, gr_vector_int &ninput_items_required
 	// maybe for when nrsc5 has a reasonably sized buffer of data but hasn't output anything yet?
 }
 
-int
-nrsc5_rx_impl::general_work (int                       noutput_items,
-                             gr_vector_int             &ninput_items,
-                             gr_vector_const_void_star &input_items,
-                             gr_vector_void_star       &output_items)
+int nrsc5_rx_impl::general_work (int                       noutput_items,
+                                 gr_vector_int             &ninput_items,
+                                 gr_vector_const_void_star &input_items,
+                                 gr_vector_void_star       &output_items)
 {
 	int n = 0;
 
@@ -84,6 +78,7 @@ nrsc5_rx_impl::general_work (int                       noutput_items,
 
 	// hack to get around non-const variables in nrsc5.
 	// It won't cause undefined behavior as long as nrsc5 doesn't change how piped samples work
+	// Update: nrsc5 now uses const for piped samples in the api. I'm keeping this around for compatibility.
 	int16_t* in = const_cast<int16_t*>(static_cast<const int16_t*>(input_items[0]));
 
 	auto out0 = static_cast<float*>(output_items[0]);
@@ -120,9 +115,9 @@ nrsc5_rx_impl::general_work (int                       noutput_items,
 	return n;
 }
 
-void nrsc5_rx_impl::set_program(int program) {
+void nrsc5_rx_impl::set_program(unsigned int program) {
 	// only 4 programs are supported
-	if ((program < 0) || (program > 3)) {
+	if (program > 3) {
 		std::cerr << "gr-nrsc5_rx: Warning: " << program << " is not a valid program number.\n";
 		return;
 	}
@@ -138,11 +133,7 @@ int nrsc5_rx_impl::get_sync() {
 	return nrsc5_sync;
 }
 
-} /* namespace nrsc5_rx */
-} /* namespace gr */
-
-
-void nrsc5_rx_callback(const nrsc5_event_t *event, void *opaque) {
+void nrsc5_rx_impl::handle_callback(const nrsc5_event_t *event) {
 	switch (event->event) {
 	case NRSC5_EVENT_LOST_DEVICE: // rtl_sdr disconnected. Should never occur, but process it anyways.
 		nrsc5_sync = 0;
@@ -209,3 +200,11 @@ void nrsc5_rx_callback(const nrsc5_event_t *event, void *opaque) {
 		break;
 	}
 }
+
+void nrsc5_rx_callback(const nrsc5_event_t *event, void* opaque) {
+	nrsc5_rx_impl* thisptr = (nrsc5_rx_impl*)opaque;
+	thisptr->handle_callback(event);
+}
+
+} /* namespace nrsc5_rx */
+} /* namespace gr */
