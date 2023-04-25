@@ -1480,28 +1480,32 @@ void MainWindow::audioFftTimeout()
 /** RDS message display timeout. */
 void MainWindow::rdsTimeout()
 {
-    int num;
+    int type;
+	// TODO: switch on current receiver
     if (d_rds_sis)
     {
-        std::string buffer[6];
+		std::vector<std::string> buffer;
 
-        rx->get_sis_data(buffer, num);
-        while(num!=-1) {
-            if (num == 0)
-                uiDockRDS->updateSIS(buffer);
-            if (num == 1)
-                uiDockRDS->updateID3(buffer);
-            rx->get_sis_data(buffer, num);
+        rx->get_metadata(buffer, type);
+        while(type!=-1) {
+			std::string* ptr = buffer.data();
+
+            if (type == 0)
+                uiDockRDS->updateSIS(ptr);
+            if (type == 1)
+                uiDockRDS->updateID3(ptr);
+
+            rx->get_metadata(buffer, type);
         }
     }
     else
     {
-        std::string buffer;
+        std::vector<std::string> buffer;
 
-        rx->get_rds_data(buffer, num);
-        while(num!=-1) {
-            uiDockRDS->updateRDS(QString::fromStdString(buffer), num);
-            rx->get_rds_data(buffer, num);
+        rx->get_metadata(buffer, type);
+        while(type!=-1) {
+            uiDockRDS->updateRDS(QString::fromStdString(buffer[0]), type);
+            rx->get_metadata(buffer, type);
         }
     }
 }

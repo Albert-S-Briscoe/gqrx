@@ -23,7 +23,6 @@
 #ifndef RX_RDS_H
 #define RX_RDS_H
 
-#include <mutex>
 #include <gnuradio/hier_block2.h>
 
 #if GNURADIO_VERSION < 0x030900
@@ -41,41 +40,20 @@
 #include <gnuradio/digital/symbol_sync_cc.h>
 #include <gnuradio/filter/fir_filter_blk.h>
 #include <gnuradio/filter/freq_xlating_fir_filter.h>
-#include <queue>
 #include "dsp/rds/decoder.h"
 #include "dsp/rds/parser.h"
+#include "dsp/msg_store.h"
 
 class rx_rds;
-class rx_rds_store;
 
 #if GNURADIO_VERSION < 0x030900
 typedef boost::shared_ptr<rx_rds> rx_rds_sptr;
-typedef boost::shared_ptr<rx_rds_store> rx_rds_store_sptr;
 #else
 typedef std::shared_ptr<rx_rds> rx_rds_sptr;
-typedef std::shared_ptr<rx_rds_store> rx_rds_store_sptr;
 #endif
 
 
 rx_rds_sptr make_rx_rds(double sample_rate);
-
-rx_rds_store_sptr make_rx_rds_store();
-
-class rx_rds_store : public gr::block
-{
-public:
-    rx_rds_store();
-    ~rx_rds_store();
-
-    void get_message(std::string &out, int &type);
-
-private:
-    void store(pmt::pmt_t msg);
-
-    std::mutex d_mutex;
-    std::queue<pmt::pmt_t> d_messages;
-
-};
 
 class rx_rds : public gr::hier_block2
 {

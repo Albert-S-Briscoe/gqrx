@@ -51,10 +51,10 @@ public:
 
     bool has_fm() { return false; }
 
-    bool has_nrsc5() { return true; }
+    bool has_multiple_programs() { return true; }
     void set_nrsc5_program(int program);
 
-    void get_sis_data(std::string (&outbuff)[6], int &num);
+    void get_metadata(std::vector<std::string> &outbuff, int &num);
     bool is_rds_decoder_active();
 
 private:
@@ -72,7 +72,7 @@ private:
     resampler_ff_sptr         audio_rr0;  /*!< Audio resampler. */
     resampler_ff_sptr         audio_rr1;  /*!< Audio resampler. */
 
-    rx_demod_nrsc5_store_sptr rds_store; /*!< RDS decoded messages */
+    rx_demod_nrsc5_store_sptr msg_store; /*!< RDS decoded messages */
 
 };
 

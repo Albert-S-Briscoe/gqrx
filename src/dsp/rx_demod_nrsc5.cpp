@@ -55,32 +55,33 @@ float rx_demod_nrsc5::get_level_db()
 
 
 
-rx_demod_nrsc5_store::rx_demod_nrsc5_store() : gr::block ("rx_rds_store",
-                                gr::io_signature::make (0, 0, 0),
-                                gr::io_signature::make (0, 0, 0))
+rx_demod_nrsc5_store::rx_demod_nrsc5_store() : msg_store()
 {
-        message_port_register_in(pmt::mp("store"));
-        set_msg_handler(pmt::mp("store"), std::bind(&rx_demod_nrsc5_store::store, this, std::placeholders::_1));
 }
 
 rx_demod_nrsc5_store::~rx_demod_nrsc5_store ()
 {
 }
 
+/*
 void rx_demod_nrsc5_store::store(pmt::pmt_t msg)
 {
     std::lock_guard<std::mutex> lock(d_mutex);
     d_messages.push(msg);
 }
+*/
 
-void rx_demod_nrsc5_store::get_message(std::string (&out)[6], int &type)
+void rx_demod_nrsc5_store::get_message(std::vector<std::string> &out, int &type)
 {
     std::lock_guard<std::mutex> lock(d_mutex);
     if (d_messages.size()>0) {
         pmt::pmt_t msg=d_messages.front();
         type=pmt::to_long(pmt::tuple_ref(msg,0));
 
-        for (int i = 0; i < (type == 0 ? 6 : 4); i++)
+		size_t length = (type == 0) ? 6 : 4;
+		out.resize(length);
+
+        for (size_t i = 0; i < length; i++)
         {
             out[i] = pmt::symbol_to_string(pmt::tuple_ref(msg, i + 1));
         }

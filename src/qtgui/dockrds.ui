@@ -23,7 +23,7 @@
    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
   </property>
   <property name="windowTitle">
-   <string>Broadcast Information</string>
+   <string>Metadata</string>
   </property>
   <widget class="QStackedWidget" name="stackedWidget">
    <property name="currentIndex">
@@ -34,7 +34,7 @@
      <item>
       <widget class="QLabel" name="label_14">
        <property name="text">
-        <string>Broadcast information not supported</string>
+        <string>Metadata not supported</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>

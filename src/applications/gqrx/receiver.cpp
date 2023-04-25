@@ -978,7 +978,7 @@ receiver::status receiver::set_amsync_pll_bw(float pll_bw)
 
 receiver::status receiver::set_nrsc5_program(int program)
 {
-    if (rx->has_nrsc5())
+    if (rx->has_multiple_programs())
         rx->set_nrsc5_program(program);
 
     return STATUS_OK;
@@ -1418,14 +1418,9 @@ void receiver::connect_all(rx_chain type)
     }
 }
 
-void receiver::get_rds_data(std::string &outbuff, int &num)
+void receiver::get_metadata(std::vector<std::string> &outbuff, int &num)
 {
-    rx->get_rds_data(outbuff, num);
-}
-
-void receiver::get_sis_data(std::string (&outbuff)[6], int &num)
-{
-    rx->get_sis_data(outbuff, num);
+    rx->get_metadata(outbuff, num);
 }
 
 void receiver::start_rds_decoder(void)

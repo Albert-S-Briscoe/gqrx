@@ -102,13 +102,13 @@ public:
     void set_fm_maxdev(float maxdev_hz);
     void set_fm_deemph(double tau);
 
-    void get_rds_data(std::string &outbuff, int &num);
+    void get_metadata(std::vector<std::string> &outbuff, int &num);
     void start_rds_decoder();
     void stop_rds_decoder();
     void reset_rds_parser();
     bool is_rds_decoder_active();
 
-    bool has_nrsc5() { return false; }
+    bool has_multiple_programs() { return false; }
 
 private:
     bool   d_running;          /*!< Whether receiver is running or not. */
@@ -128,7 +128,7 @@ private:
     stereo_demod_sptr         mono;      /*!< FM stereo demodulator OFF. */
 
     rx_rds_sptr               rds;       /*!< RDS decoder */
-    rx_rds_store_sptr         rds_store; /*!< RDS decoded messages */
+    msg_store_sptr            rds_store; /*!< RDS decoded messages */
     gr::rds::decoder::sptr    rds_decoder;
     gr::rds::parser::sptr     rds_parser;
     bool                      rds_enabled;

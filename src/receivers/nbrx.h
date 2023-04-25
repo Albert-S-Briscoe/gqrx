@@ -115,7 +115,7 @@ public:
     void set_amsync_dcr(bool enabled);
     void set_amsync_pll_bw(float pll_bw);
 
-    bool has_nrsc5() { return false; }
+    bool has_multiple_programs() { return false; }
 
 private:
     bool   d_running;          /*!< Whether receiver is running or not. */

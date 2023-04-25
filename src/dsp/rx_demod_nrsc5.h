@@ -9,6 +9,7 @@
 #include <queue>
 
 #include "dsp/nrsc5_rx/nrsc5_rx.h"
+#include "dsp/msg_store.h"
 
 class rx_demod_nrsc5;
 class rx_demod_nrsc5_store;
@@ -54,6 +55,16 @@ private:
 };
 
 
+class rx_demod_nrsc5_store : public msg_store
+{
+public:
+	rx_demod_nrsc5_store();
+	~rx_demod_nrsc5_store();
+
+	void get_message(std::vector<std::string> &out, int &type);
+};
+
+/*
 class rx_demod_nrsc5_store : public gr::block
 {
 public:
@@ -69,5 +80,6 @@ private:
     std::queue<pmt::pmt_t> d_messages;
 
 };
+*/
 
 #endif // RX_DEMOD_NRSC5_H
