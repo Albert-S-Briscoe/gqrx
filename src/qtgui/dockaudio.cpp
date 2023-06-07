@@ -60,11 +60,11 @@ DockAudio::DockAudio(QWidget *parent) :
     ui->audioSpectrum->setFilterBoxEnabled(false);
     ui->audioSpectrum->setCenterLineEnabled(false);
     ui->audioSpectrum->setBookmarksEnabled(false);
-    ui->audioSpectrum->setBandPlanEnabled(false);
+    ui->audioSpectrum->enableBandPlan(false);
     ui->audioSpectrum->setFftRange(-80., 0.);
     ui->audioSpectrum->setVdivDelta(40);
-    ui->audioSpectrum->setHdivDelta(40);
     ui->audioSpectrum->setFreqDigits(1);
+    ui->audioSpectrum->setRunningState(true);
 
     QShortcut *rec_toggle_shortcut = new QShortcut(QKeySequence(Qt::Key_R), this);
     QShortcut *mute_toggle_shortcut = new QShortcut(QKeySequence(Qt::Key_M), this);
@@ -118,7 +118,7 @@ void DockAudio::setAudioGain(int gain)
  */
 void DockAudio::setAudioGainDb(float gain)
 {
-    ui->audioGainSlider->setValue(int(std::round(gain*10.0)));
+    ui->audioGainSlider->setValue(int(std::round(gain*10.0f)));
 }
 
 
@@ -139,7 +139,7 @@ void DockAudio::setFftColor(QColor color)
 /*! Enable/disable filling area under FFT plot. */
 void DockAudio::setFftFill(bool enabled)
 {
-    ui->audioSpectrum->setFftFill(enabled);
+    ui->audioSpectrum->enableFftFill(enabled);
 }
 
 /*! Public slot to trig audio recording by external events (e.g. satellite AOS).
@@ -186,7 +186,7 @@ void DockAudio::setWfColormap(const QString &cmap)
  */
 void DockAudio::on_audioGainSlider_valueChanged(int value)
 {
-    float gain = float(value) / 10.0;
+    float gain = float(value) / 10.0f;
 
     // update dB label
     ui->audioGainDbLabel->setText(QString("%1 dB").arg(gain, 5, 'f', 1));
@@ -285,7 +285,7 @@ void DockAudio::on_audioMuteButton_clicked(bool checked)
     else
     {
         int value = ui->audioGainSlider->value();
-        float gain = float(value) / 10.0;
+        float gain = float(value) / 10.0f;
         emit audioGainChanged(gain);
     }
 }
