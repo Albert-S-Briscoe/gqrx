@@ -52,7 +52,7 @@ public:
     bool has_fm() { return false; }
 
     bool has_multiple_programs() { return true; }
-    void set_nrsc5_program(int program);
+    void set_digital_program(int program);
 
     void get_metadata(std::vector<std::string> &outbuff, int &num);
     bool is_rds_decoder_active();

@@ -976,10 +976,10 @@ receiver::status receiver::set_amsync_pll_bw(float pll_bw)
     return STATUS_OK;
 }
 
-receiver::status receiver::set_nrsc5_program(int program)
+receiver::status receiver::set_digital_program(int program)
 {
     if (rx->has_multiple_programs())
-        rx->set_nrsc5_program(program);
+        rx->set_digital_program(program);
 
     return STATUS_OK;
 }

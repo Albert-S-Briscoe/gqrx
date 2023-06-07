@@ -1297,7 +1297,7 @@ void MainWindow::setNrsc5Program(int program)
     qDebug() << "NRSC-5 Program: " << program;
 
     /* receiver will check range */
-    rx->set_nrsc5_program(program);
+    rx->set_digital_program(program);
 }
 
 /**

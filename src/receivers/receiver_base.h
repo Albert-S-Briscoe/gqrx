@@ -101,7 +101,7 @@ public:
 
     /* nrsc5 parameters */
     virtual bool has_multiple_programs();
-    virtual void set_nrsc5_program(int program);
+    virtual void set_digital_program(int program);
 
     virtual void get_metadata(std::vector<std::string> &outbuff, int &num);
     virtual void start_rds_decoder();

@@ -154,7 +154,7 @@ bool receiver_base_cf::has_multiple_programs()
     return false;
 }
 
-void receiver_base_cf::set_nrsc5_program(int program)
+void receiver_base_cf::set_digital_program(int program)
 {
     (void) program;
 }

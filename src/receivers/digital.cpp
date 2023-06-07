@@ -153,7 +153,7 @@ void digital::set_demod(int rx_demod)
     unlock();
 }
 
-void digital::set_nrsc5_program(int program)
+void digital::set_digital_program(int program)
 {
     nrsc5->set_program(program);
 }

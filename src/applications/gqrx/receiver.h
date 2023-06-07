@@ -197,7 +197,7 @@ public:
     status      set_amsync_pll_bw(float pll_bw);
 
     /* nrsc5 parameters */
-    status      set_nrsc5_program(int program);
+    status      set_digital_program(int program);
 
     /* Audio parameters */
     status      set_af_gain(float gain_db);
