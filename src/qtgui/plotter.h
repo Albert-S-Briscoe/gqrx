@@ -18,6 +18,7 @@
 #define PEAK_CLICK_MAX_V_DISTANCE 20 //Maximum vertical distance of clicked point from peak
 #define PEAK_WINDOW_HALF_WIDTH    10
 #define PEAK_UPDATE_PERIOD       100 // msec
+#define PLOTTER_UPDATE_LIMIT_MS   16 // 16ms = 62.5 Hz
 
 #define MARKER_OFF std::numeric_limits<qint64>::min()
 
@@ -55,7 +56,7 @@ public:
     void setFilterOffset(qint64 freq_hz)
     {
         m_DemodCenterFreq = m_CenterFreq + freq_hz;
-        drawOverlay();
+        updateOverlay();
     }
     qint64 getFilterOffset() const
     {
@@ -71,7 +72,7 @@ public:
     {
         m_DemodLowCutFreq = LowCut;
         m_DemodHiCutFreq = HiCut;
-        drawOverlay();
+        updateOverlay();
     }
 
     void getHiLowCutFrequencies(int *LowCut, int *HiCut) const
@@ -89,7 +90,7 @@ public:
             m_Span = (qint32)s;
             setFftCenterFreq(m_FftCenter);
         }
-        drawOverlay();
+        updateOverlay();
     }
 
     void setVdivDelta(int delta) { m_VdivDelta = delta; }
@@ -102,7 +103,7 @@ public:
         if (rate > 0.0f)
         {
             m_SampleFreq = rate;
-            drawOverlay();
+            updateOverlay();
         }
     }
 
@@ -112,7 +113,7 @@ public:
     }
 
     void setFftCenterFreq(qint64 f) {
-        qint64 limit = ((qint64)m_SampleFreq + m_Span) / 2 - 1;
+        qint64 limit = ((qint64)m_SampleFreq - m_Span) / 2 - 1;
         m_FftCenter = qBound(-limit, f, limit);
     }
 
@@ -122,12 +123,15 @@ public:
         m_DoubleSidebandFilter = doubleSideband;
     };
 
+    qint64 getFftCenterFreq() const {
+        return m_FftCenter;
+    }
+
     int     getNearestPeak(QPoint pt);
     void    setWaterfallSpan(quint64 span_ms);
     quint64 getWfTimeRes() const;
     void    setFftRate(int rate_hz);
     void    clearWaterfallBuf();
-    bool    saveWaterfall(const QString & filename) const;
 
     enum ePlotMode {
         PLOT_MODE_MAX = 0,
@@ -183,6 +187,7 @@ public slots:
     void enableBandPlan(bool enable);
     void enableMarkers(bool enabled);
     void setMarkers(qint64 a, qint64 b);
+    void clearWaterfall();
     void updateOverlay();
 
     void setPercent2DScreen(int percent)
@@ -241,12 +246,13 @@ private:
     float       m_fftAvgBuf[MAX_SCREENSIZE]{};
     float       m_wfMaxBuf[MAX_SCREENSIZE]{};
     float       m_wfAvgBuf[MAX_SCREENSIZE]{};
-    double      m_histogram[MAX_SCREENSIZE][MAX_HISTOGRAM_SIZE]{};
-    double      m_histIIR[MAX_SCREENSIZE][MAX_HISTOGRAM_SIZE]{};
-    double      m_histMaxIIR;
+    float       m_histogram[MAX_SCREENSIZE][MAX_HISTOGRAM_SIZE]{};
+    float       m_histIIR[MAX_SCREENSIZE][MAX_HISTOGRAM_SIZE]{};
+    float       m_histMaxIIR;
     std::vector<float> m_fftIIR;
     std::vector<float> m_fftData;
-    double      m_wfbuf[MAX_SCREENSIZE]{}; // used for accumulating waterfall data at high time spans
+    std::vector<float> m_X;                // scratch array of matching size for local calculation
+    float      m_wfbuf[MAX_SCREENSIZE]{}; // used for accumulating waterfall data at high time spans
     float       m_fftMaxHoldBuf[MAX_SCREENSIZE]{};
     float       m_fftMinHoldBuf[MAX_SCREENSIZE]{};
     float       m_peakSmoothBuf[MAX_SCREENSIZE]{}; // used in peak detection
@@ -259,7 +265,7 @@ private:
     eCapturetype    m_CursorCaptured;
     QPixmap     m_2DPixmap;         // Composite of everything displayed in the 2D plotter area
     QPixmap     m_OverlayPixmap;    // Grid, axes ... things that need to be drawn infrequently
-    QPixmap     m_WaterfallPixmap;
+    QImage      m_WaterfallImage;
     QColor      m_ColorTbl[256];
     QSize       m_Size;
     qreal       m_DPR{};
@@ -306,11 +312,12 @@ private:
     float       m_PandMaxdB;
     float       m_WfMindB;
     float       m_WfMaxdB;
-    double      m_alpha;     /*!< IIR averaging. */
+    float       m_alpha;     /*!< IIR averaging. */
 
     qint64      m_Span;
     float       m_SampleFreq;    /*!< Sample rate. */
     qint32      m_FreqUnits;
+    qint32      m_CumWheelDelta;
     qreal       m_ClickResolution;
     qreal       m_FilterClickResolution;
     ePlotMode   m_PlotMode;
@@ -337,6 +344,7 @@ private:
 
     // Waterfall averaging
     quint64     tlast_wf_ms;        // last time waterfall has been updated
+    quint64     tlast_plot_drawn_ms;// last time the plot was drawn
     quint64     tlast_wf_drawn_ms;  // last time waterfall was drawn
     quint64     wf_valid_since_ms;  // last time before action that invalidates time line
     double      msec_per_wfline{};  // milliseconds between waterfall updates

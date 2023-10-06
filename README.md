@@ -183,6 +183,7 @@ The following people and organisations have contributed to gqrx:
 * Andy Sloane
 * Anthony Willard
 * Anton Blanchard
+* AsciiWolf
 * Bastian Bloessl
 * Ben Reese
 * Bob McGwier, N4HY
@@ -196,6 +197,7 @@ The following people and organisations have contributed to gqrx:
 * Darin Franklin
 * Davide Gerhard
 * Dominic Chen
+* Doron Behar
 * Doug Hammond
 * Elias Önal
 * Federico Fuga
@@ -210,11 +212,13 @@ The following people and organisations have contributed to gqrx:
 * Jiawei Chen
 * Jiří Pinkava
 * Joachim Schueth, DL2KCD
+* Jon Bergli Heier
 * Josh Blum
 * Kate Adams
 * Kenji Rikitake, JJ1BDX
 * Kitware Inc.
 * Konrad Beckmann
+* Luna Gräfje
 * luzpaz
 * Marco Savelli
 * Markus Kolb
@@ -236,6 +240,7 @@ The following people and organisations have contributed to gqrx:
 * Russell Dwarshuis, KB8U
 * Shuyuan Liu
 * Stefano Leucci
+* Sultan Qasim Khan
 * Sylvain Munaut
 * Tarmo Tanilsoo
 * Tomasz Lemiech

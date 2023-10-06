@@ -155,7 +155,7 @@
               </property>
               <property name="toolTip">
                <string>Amount of smoothing for plot
-(histogram is not affected)</string>
+(persistence for histogram)</string>
               </property>
               <property name="maximum">
                <number>100</number>
@@ -298,7 +298,7 @@
                <string>Zoom level for frequency axis</string>
               </property>
               <property name="minimum">
-               <number>1</number>
+               <number>0</number>
               </property>
               <property name="maximum">
                <number>100</number>
@@ -646,6 +646,16 @@
               <property name="currentIndex">
                <number>0</number>
               </property>
+              <item>
+               <property name="text">
+                <string>500 fps</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>333 fps</string>
+               </property>
+              </item>
               <item>
                <property name="text">
                 <string>250 fps</string>

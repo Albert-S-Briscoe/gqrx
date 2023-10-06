@@ -198,7 +198,7 @@ private slots:
     void stopAudioStreaming();
 
     /* I/Q playback and recording*/
-    void startIqRecording(const QString& recdir);
+    void startIqRecording(const QString& recdir, const QString& format);
     void stopIqRecording();
     void startIqPlayback(const QString& filename, float samprate, qint64 center_freq);
     void stopIqPlayback();
@@ -234,7 +234,6 @@ private slots:
     int  on_actionIoConfig_triggered();
     void on_actionLoadSettings_triggered();
     void on_actionSaveSettings_triggered();
-    void on_actionSaveWaterfall_triggered();
     void on_actionIqTool_triggered();
     void on_actionFullScreen_triggered(bool checked);
     void on_actionRemoteControl_triggered(bool checked);

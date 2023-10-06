@@ -244,7 +244,7 @@ void DockFft::saveSettings(QSettings *settings)
         settings->remove("fft_rate");
 
     intval = ui->fftWinComboBox->currentIndex();
-    if ((unsigned int)intval > window_strs.size())
+    if (intval > (int)window_strs.size())
         intval = DEFAULT_FFT_WINDOW;
     strval = window_strs[intval];
     settings->setValue("fft_window", strval);
@@ -541,7 +541,8 @@ void DockFft::setWaterfallRange(float min, float max)
 void DockFft::setZoomLevel(float level)
 {
     ui->fftZoomSlider->blockSignals(true);
-    ui->fftZoomSlider->setValue((int) level);
+    float logZoom = 100.0f / 5.0f * log10f(level);
+    ui->fftZoomSlider->setValue(qRound(logZoom));
     ui->zoomLevelLabel->setText(QString("%1x").arg((int) level));
     ui->fftZoomSlider->blockSignals(false);
 }
@@ -600,7 +601,7 @@ void DockFft::setWfResolution(quint64 msec_per_line)
 {
     float res = 1.0e-3f * (float)msec_per_line;
 
-    ui->wfResLabel->setText(QString("Res: %1 s").arg(res, 0, 'f', 2));
+    ui->wfResLabel->setText(QString("Res: %1 s").arg((double)res, 0, 'f', 2));
 }
 
 /**
@@ -628,8 +629,9 @@ void DockFft::on_fftAvgSlider_valueChanged(int value)
 /** FFT zoom level changed */
 void DockFft::on_fftZoomSlider_valueChanged(int level)
 {
-    ui->zoomLevelLabel->setText(QString("%1x").arg(level));
-    emit fftZoomChanged((float)level);
+    float linearZoom = powf(10.0f, (float)level * 5.0f / 100.0f);
+    ui->zoomLevelLabel->setText(QString("%1x").arg(qRound(linearZoom)));
+    emit fftZoomChanged(linearZoom);
 }
 
 void DockFft::on_wfModeBox_currentIndexChanged(int index)
@@ -777,11 +779,11 @@ void DockFft::updateInfoLabels(void)
 
     rbw = m_sample_rate / size;
     if (rbw < 1.e3f)
-        ui->fftRbwLabel->setText(QString("RBW: %1 Hz").arg(rbw, 0, 'f', 1));
+        ui->fftRbwLabel->setText(QString("RBW: %1 Hz").arg((double)rbw, 0, 'f', 1));
     else if (rbw < 1.e6f)
-        ui->fftRbwLabel->setText(QString("RBW: %1 kHz").arg(1.e-3f * rbw, 0, 'f', 1));
+        ui->fftRbwLabel->setText(QString("RBW: %1 kHz").arg(1.e-3 * (double)rbw, 0, 'f', 1));
     else
-        ui->fftRbwLabel->setText(QString("RBW: %1 MHz").arg(1.e-6f * rbw, 0, 'f', 1));
+        ui->fftRbwLabel->setText(QString("RBW: %1 MHz").arg(1.e-6 * (double)rbw, 0, 'f', 1));
 
     rate = fftRate();
     if (rate == 0)
@@ -795,5 +797,5 @@ void DockFft::updateInfoLabels(void)
         else
             ovr = 100 * (1.f - interval_samples / size);
     }
-    ui->fftOvrLabel->setText(QString("Overlap: %1%").arg(ovr, 0, 'f', 0));
+    ui->fftOvrLabel->setText(QString("Overlap: %1%").arg((double)ovr, 0, 'f', 0));
 }

@@ -42,16 +42,22 @@ nbrx::nbrx(float quad_rate, float audio_rate)
 {
     iq_resamp = make_resampler_cc(PREF_QUAD_RATE/d_quad_rate);
 
-    nb = make_rx_nb_cc(PREF_QUAD_RATE, 3.3, 2.5);
-    filter = make_rx_filter(PREF_QUAD_RATE, -5000.0, 5000.0, 1000.0);
-    agc = make_rx_agc_cc(PREF_QUAD_RATE, true, -100, 0, 0, 500, false);
+    nb = make_rx_nb_cc((double)PREF_QUAD_RATE, 3.3, 2.5);
+    filter = make_rx_filter((double)PREF_QUAD_RATE, -5000.0, 5000.0, 1000.0);
+    agc = make_rx_agc_cc((double)PREF_QUAD_RATE, true, -100, 0, 0, 500, false);
     sql = gr::analog::simple_squelch_cc::make(-150.0, 0.001);
-    meter = make_rx_meter_c(PREF_QUAD_RATE);
+    meter = make_rx_meter_c((double)PREF_QUAD_RATE);
     demod_raw = gr::blocks::complex_to_float::make(1);
     demod_ssb = gr::blocks::complex_to_real::make(1);
     demod_fm = make_rx_demod_fm(PREF_QUAD_RATE, 5000.0, 75.0e-6);
     demod_am = make_rx_demod_am(PREF_QUAD_RATE, true);
     demod_amsync = make_rx_demod_amsync(PREF_QUAD_RATE, true, 0.001);
+
+    // Width of rx_filter can be adjusted at run time, so the input buffer (the
+    // output buffer of nb) needs to be large enough for the longest history
+    // required by the filter (Narrow/Sharp). This setting may not be reliable
+    // for GR prior to v3.10.7.0.
+    nb->set_min_output_buffer(32768);
 
     audio_rr0.reset();
     audio_rr1.reset();

@@ -273,7 +273,7 @@ void DockRxOpt::setFilterParam(int lo, int hi)
         float width_f;
         width_f = fabs((hi-lo)/1000.f);
         ui->filterCombo->setItemText(FILTER_PRESET_USER, QString("User (%1 k)")
-                                     .arg(width_f));
+                                     .arg((double)width_f));
     }
 }
 
@@ -414,7 +414,7 @@ void DockRxOpt::readSettings(QSettings *settings)
     if (conv_ok)
         demodOpt->setCwOffset(int_val);
 
-    int_val = settings->value("receiver/fm_maxdev", 2500).toInt(&conv_ok);
+    int_val = settings->value("receiver/fm_maxdev", 5000).toInt(&conv_ok);
     if (conv_ok)
         demodOpt->setMaxDev(int_val);
 
@@ -502,7 +502,7 @@ void DockRxOpt::saveSettings(QSettings *settings)
 
     // currently we do not need the decimal
     int_val = (int)demodOpt->getMaxDev();
-    if (int_val == 2500)
+    if (int_val == 5000)
         settings->remove("receiver/fm_maxdev");
     else
         settings->setValue("receiver/fm_maxdev", int_val);

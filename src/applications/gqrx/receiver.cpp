@@ -48,6 +48,7 @@
 #endif
 
 #define DEFAULT_AUDIO_GAIN -6.0
+#define WAV_FILE_GAIN 0.5
 #define TARGET_QUAD_RATE 1e6
 
 /**
@@ -751,9 +752,9 @@ void receiver::set_iq_fft_window(int window_type, bool normalize_energy)
 }
 
 /** Get latest baseband FFT data. */
-void receiver::get_iq_fft_data(float* fftPoints)
+int receiver::get_iq_fft_data(float* fftPoints)
 {
-    iq_fft->get_fft_data(fftPoints);
+    return iq_fft->get_fft_data(fftPoints);
 }
 
 unsigned int receiver::audio_fft_size() const
@@ -762,9 +763,9 @@ unsigned int receiver::audio_fft_size() const
 }
 
 /** Get latest audio FFT data. */
-void receiver::get_audio_fft_data(float* fftPoints)
+int receiver::get_audio_fft_data(float* fftPoints)
 {
-    audio_fft->get_fft_data(fftPoints);
+    return audio_fft->get_fft_data(fftPoints);
 }
 
 receiver::status receiver::set_nb_on(int nbid, bool on)
@@ -1034,6 +1035,9 @@ receiver::status receiver::start_audio_recording(const std::string filename)
         return STATUS_ERROR;
     }
 
+    wav_gain0 = gr::blocks::multiply_const_ff::make(WAV_FILE_GAIN);
+    wav_gain1 = gr::blocks::multiply_const_ff::make(WAV_FILE_GAIN);
+
     // if this fails, we don't want to go and crash now, do we
     try {
 #if GNURADIO_VERSION < 0x030900
@@ -1052,8 +1056,10 @@ receiver::status receiver::start_audio_recording(const std::string filename)
     }
 
     tb->lock();
-    tb->connect(rx, 0, wav_sink, 0);
-    tb->connect(rx, 1, wav_sink, 1);
+    tb->connect(rx, 0, wav_gain0, 0);
+    tb->connect(rx, 1, wav_gain1, 0);
+    tb->connect(wav_gain0, 0, wav_sink, 0);
+    tb->connect(wav_gain1, 0, wav_sink, 1);
     tb->unlock();
     d_recording_wav = true;
 
@@ -1082,8 +1088,10 @@ receiver::status receiver::stop_audio_recording()
     // not strictly necessary to lock but I think it is safer
     tb->lock();
     wav_sink->close();
-    tb->disconnect(rx, 0, wav_sink, 0);
-    tb->disconnect(rx, 1, wav_sink, 1);
+    tb->disconnect(rx, 0, wav_gain0, 0);
+    tb->disconnect(rx, 1, wav_gain1, 0);
+    tb->disconnect(wav_gain0, 0, wav_sink, 0);
+    tb->disconnect(wav_gain1, 0, wav_sink, 1);
 
     // Temporary workaround for https://github.com/gnuradio/gnuradio/issues/5436
     tb->disconnect(ddc, 0, rx, 0);
@@ -1091,6 +1099,8 @@ receiver::status receiver::stop_audio_recording()
     // End temporary workaronud
 
     tb->unlock();
+    wav_gain0.reset();
+    wav_gain1.reset();
     wav_sink.reset();
     d_recording_wav = false;
 
@@ -1417,8 +1427,10 @@ void receiver::connect_all(rx_chain type)
     // Recorders and sniffers
     if (d_recording_wav)
     {
-        tb->connect(rx, 0, wav_sink, 0);
-        tb->connect(rx, 1, wav_sink, 1);
+        tb->connect(rx, 0, wav_gain0, 0);
+        tb->connect(rx, 1, wav_gain1, 0);
+        tb->connect(wav_gain0, 0, wav_sink, 0);
+        tb->connect(wav_gain1, 0, wav_sink, 1);
     }
 
     if (d_sniffer_active)

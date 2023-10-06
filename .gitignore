@@ -1,10 +1,10 @@
 .DS_Store
+/.vscode/
 /build/
 /*.AppImage
 /*.dmg
 /AppDir/
 /Gqrx.app/
-/version.txt
 .idea/
 cmake-build*/
 /CMakeLists.txt.user

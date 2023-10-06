@@ -32,6 +32,7 @@
 #include <QDialogButtonBox>
 #include <QFile>
 #include <QGroupBox>
+#include <QJsonDocument>
 #include <QKeySequence>
 #include <QLineEdit>
 #include <QMessageBox>
@@ -68,6 +69,7 @@ MainWindow::MainWindow(const QString& cfgfile, bool edit_conf, QWidget *parent) 
     d_lnb_lo(0),
     d_hw_freq(0),
     d_fftAvg(0.25),
+    d_fftWindowType(0),
     d_fftNormalizeEnergy(false),
     d_have_audio(true),
     dec_afsk1200(nullptr)
@@ -110,7 +112,7 @@ MainWindow::MainWindow(const QString& cfgfile, bool edit_conf, QWidget *parent) 
 
     /* create receiver object */
     rx = new receiver("", "", 1);
-    rx->set_rf_freq(144500000.0f);
+    rx->set_rf_freq(144500000.0);
 
     // remote controller
     remote = new RemoteControl();
@@ -171,6 +173,9 @@ MainWindow::MainWindow(const QString& cfgfile, bool edit_conf, QWidget *parent) 
     // toggle markers on/off
     auto *toggle_markers_shortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_K), this);
     QObject::connect(toggle_markers_shortcut, &QShortcut::activated, this, &MainWindow::toggleMarkers);
+    // clear waterfall
+    auto *clear_waterfall_shortcut = new QShortcut(Qt::Key_Delete, this);
+    QObject::connect(clear_waterfall_shortcut, SIGNAL(activated()), ui->plotter, SLOT(clearWaterfall()));
 
     setCorner(Qt::TopLeftCorner, Qt::LeftDockWidgetArea);
     setCorner(Qt::TopRightCorner, Qt::RightDockWidgetArea);
@@ -314,7 +319,7 @@ MainWindow::MainWindow(const QString& cfgfile, bool edit_conf, QWidget *parent) 
     connect(&DXCSpots::Get(), SIGNAL(dxcSpotsUpdated()), this, SLOT(updateClusterSpots()));
 
     // I/Q playback
-    connect(iq_tool, SIGNAL(startRecording(QString)), this, SLOT(startIqRecording(QString)));
+    connect(iq_tool, SIGNAL(startRecording(QString, QString)), this, SLOT(startIqRecording(QString, QString)));
     connect(iq_tool, SIGNAL(stopRecording()), this, SLOT(stopIqRecording()));
     connect(iq_tool, SIGNAL(startPlayback(QString,float,qint64)), this, SLOT(startIqPlayback(QString,float,qint64)));
     connect(iq_tool, SIGNAL(stopPlayback()), this, SLOT(stopIqPlayback()));
@@ -675,6 +680,15 @@ bool MainWindow::loadConfig(const QString& cfgfile, bool check_crash,
     }
 
     {
+        // Center frequency for FFT plotter
+        int64_val = m_settings->value("fft/fft_center", 0).toLongLong(&conv_ok);
+
+        if (conv_ok) {
+            ui->plotter->setFftCenterFreq(int64_val);
+        }
+    }
+
+    {
         int flo = m_settings->value("receiver/filter_low_cut", 0).toInt(&conv_ok);
         int fhi = m_settings->value("receiver/filter_high_cut", 0).toInt(&conv_ok);
 
@@ -768,6 +782,7 @@ void MainWindow::storeSession()
     if (m_settings)
     {
         m_settings->setValue("input/frequency", ui->freqCtrl->getFrequency());
+        m_settings->setValue("fft/fft_center", ui->plotter->getFftCenterFreq());
 
         uiDockInputCtl->saveSettings(m_settings);
         uiDockRxOpt->saveSettings(m_settings);
@@ -1467,7 +1482,7 @@ void MainWindow::setSqlLevel(double level_db)
  */
 double MainWindow::setSqlLevelAuto()
 {
-    double level = rx->get_signal_pwr() + 3.0f;
+    double level = (double)rx->get_signal_pwr() + 3.0;
     if (level > -10.0)  // avoid 0 dBFS
         level = uiDockRxOpt->getSqlLevel();
 
@@ -1519,9 +1534,8 @@ void MainWindow::iqFftTimeout()
     }
     d_last_fft_ms = now_ms;
 
-    rx->get_iq_fft_data(d_iqFftData.data());
-
-    ui->plotter->setNewFftData(d_iqFftData.data(), fftsize);
+    if (rx->get_iq_fft_data(d_iqFftData.data()) >= 0)
+        ui->plotter->setNewFftData(d_iqFftData.data(), fftsize);
 }
 
 /** Audio FFT plot timeout. */
@@ -1539,9 +1553,8 @@ void MainWindow::audioFftTimeout()
     if (!d_have_audio || !uiDockAudio->isVisible())
         return;
 
-    rx->get_audio_fft_data(d_audioFftData.data());
-
-    uiDockAudio->setNewFftData(d_audioFftData.data(), fftsize);
+    if (rx->get_audio_fft_data(d_audioFftData.data()) >= 0)
+        uiDockAudio->setNewFftData(d_audioFftData.data(), fftsize);
 }
 
 /** RDS message display timeout. */
@@ -1668,7 +1681,7 @@ void MainWindow::stopAudioStreaming()
 }
 
 /** Start I/Q recording. */
-void MainWindow::startIqRecording(const QString& recdir)
+void MainWindow::startIqRecording(const QString& recdir, const QString& format)
 {
     qDebug() << __func__;
     // generate file name using date, time, rf freq in kHz and BW in Hz
@@ -1676,13 +1689,46 @@ void MainWindow::startIqRecording(const QString& recdir)
     auto freq = qRound64(rx->get_rf_freq());
     auto sr = qRound64(rx->get_input_rate());
     auto dec = (quint32)(rx->get_input_decim());
-    auto lastRec = QDateTime::currentDateTimeUtc().
-            toString("%1/gqrx_yyyyMMdd_hhmmss_%2_%3_fc.'raw'")
-            .arg(recdir).arg(freq).arg(sr/dec);
+    auto currentDate = QDateTime::currentDateTimeUtc();
+    auto filenameTemplate = currentDate.toString("%1/gqrx_yyyyMMdd_hhmmss_%2_%3_fc.%4").arg(recdir).arg(freq).arg(sr/dec);
+    bool sigmf = (format == "SigMF");
+    auto lastRec = filenameTemplate.arg(sigmf ? "sigmf-data" : "raw");
+
+    QFile metaFile(filenameTemplate.arg("sigmf-meta"));
+    bool ok = true;
+    if (sigmf) {
+        auto meta = QJsonDocument { QJsonObject {
+            {"global", QJsonObject {
+#if Q_BYTE_ORDER == Q_BIG_ENDIAN
+                {"core:datatype", "cf32_be"},
+#else
+                {"core:datatype", "cf32_le"},
+#endif
+                {"core:sample_rate", sr/dec},
+                {"core:version", "1.0.0"},
+                {"core:recorder", "Gqrx " VERSION},
+                {"core:hw", QString("OsmoSDR: ") + m_settings->value("input/device", "").toString()},
+            }}, {"captures", QJsonArray {
+                QJsonObject {
+                    {"core:sample_start", 0},
+                    {"core:frequency", freq},
+                    {"core:datetime", currentDate.toString(Qt::ISODateWithMs)},
+                },
+            }}, {"annotations", QJsonArray {}},
+        }}.toJson();
+
+        if (!metaFile.open(QIODevice::WriteOnly) || metaFile.write(meta) != meta.size()) {
+            ok = false;
+        }
+    }
 
     // start recorder; fails if recording already in progress
-    if (rx->start_iq_recording(lastRec.toStdString()))
+    if (!ok || rx->start_iq_recording(lastRec.toStdString()))
     {
+        // remove metadata file if we managed to open it
+        if (sigmf && metaFile.isOpen())
+            metaFile.remove();
+
         // reset action status
         ui->statusBar->showMessage(tr("Error starting I/Q recoder"));
 
@@ -1735,7 +1781,7 @@ void MainWindow::startIqPlayback(const QString& filename, float samprate, qint64
     updateHWFrequencyRange(false);
 
     // sample rate
-    auto actual_rate = rx->set_input_rate(samprate);
+    auto actual_rate = rx->set_input_rate((double)samprate);
     qDebug() << "Requested sample rate:" << samprate;
     qDebug() << "Actual sample rate   :" << QString("%1")
                 .arg(actual_rate, 0, 'f', 6);
@@ -1847,8 +1893,8 @@ void MainWindow::setIqFftRate(int fps)
             ui->plotter->setRunningState(true);
     }
 
-    // Limit to 250 fps
-    if (interval > 3 && iq_fft_timer->isActive())
+    // Limit to 500 fps
+    if (interval > 1 && iq_fft_timer->isActive())
         iq_fft_timer->setInterval(interval);
 
     uiDockFft->setWfResolution(ui->plotter->getWfTimeRes());
@@ -2086,33 +2132,6 @@ void MainWindow::on_actionSaveSettings_triggered()
     QFileInfo fi(cfgfile);
     if (m_cfg_dir != fi.absolutePath())
         m_last_dir = fi.absolutePath();
-}
-
-void MainWindow::on_actionSaveWaterfall_triggered()
-{
-    QDateTime   dt(QDateTime::currentDateTimeUtc());
-
-    // previously used location
-    auto save_path = m_settings->value("wf_save_dir", "").toString();
-    if (!save_path.isEmpty())
-        save_path += "/";
-    save_path += dt.toString("gqrx_wf_yyyyMMdd_hhmmss.png");
-
-    auto wffile = QFileDialog::getSaveFileName(this, tr("Save waterfall"),
-                                          save_path, nullptr);
-    if (wffile.isEmpty())
-        return;
-
-    if (!ui->plotter->saveWaterfall(wffile))
-    {
-        QMessageBox::critical(this,
-                              tr("Error"),
-                              tr("There was an error saving the waterfall"));
-    }
-
-    // store the location used for the waterfall file
-    QFileInfo fi(wffile);
-    m_settings->setValue("wf_save_dir", fi.absolutePath());
 }
 
 /** Show I/Q player. */
